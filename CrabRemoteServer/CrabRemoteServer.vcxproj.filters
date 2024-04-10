@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="真彩棒">
+      <UniqueIdentifier>{61b844f5-49aa-441a-942f-a8ff5a31dd4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="主窗口">
+      <UniqueIdentifier>{54819def-16b0-47be-8a20-a10e6498e044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="配置文件">
+      <UniqueIdentifier>{a1a4e387-e028-4ca3-a3aa-3aa9a62fd162}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="服务端管理">
+      <UniqueIdentifier>{95ea72cb-77ae-48d1-a3c4-72be9af9564d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="通信核心">
+      <UniqueIdentifier>{b0e884f9-d96c-4ff3-8482-f8bdc1775d58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="数据结构">
+      <UniqueIdentifier>{c0b7d427-d171-44df-a6d9-41b4f000be9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Login">
+      <UniqueIdentifier>{860f48ce-a190-4384-bdaf-acfaea18680f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="压缩库">
+      <UniqueIdentifier>{09e46673-5cd4-49f0-844d-99f56e14b343}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="即时消息">
+      <UniqueIdentifier>{e2fb626c-e777-4858-9a74-7502ac545c34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="进程管理">
+      <UniqueIdentifier>{5d30d958-51d5-4635-ad16-15d137167bda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="进程管理\创建进程窗口">
+      <UniqueIdentifier>{14d6aafc-b80d-4914-9ab6-b15a3bac8ab1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="进程管理\进程内存">
+      <UniqueIdentifier>{b6fb645d-1209-4d8d-9de4-f2337672b67d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="进程管理\进程内存\ValueEditor">
+      <UniqueIdentifier>{9e99401c-51e8-4155-8bf1-6db58ee40587}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CrabRemoteServer.h">
+      <Filter>主窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="CrabRemoteServerDlg.h">
+      <Filter>主窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>主窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="TrueColorToolBar.h">
+      <Filter>真彩棒</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigFile.h">
+      <Filter>配置文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CServerManagerDlg.h">
+      <Filter>服务端管理</Filter>
+    </ClInclude>
+    <ClInclude Include="IocpServer.h">
+      <Filter>通信核心</Filter>
+    </ClInclude>
+    <ClInclude Include="CArray.h">
+      <Filter>数据结构</Filter>
+    </ClInclude>
+    <ClInclude Include="CriticalSection.h">
+      <Filter>数据结构</Filter>
+    </ClInclude>
+    <ClInclude Include="Login.h">
+      <Filter>Login</Filter>
+    </ClInclude>
+    <ClInclude Include="zconf.h">
+      <Filter>压缩库</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib.h">
+      <Filter>压缩库</Filter>
+    </ClInclude>
+    <ClInclude Include="InstantMessageDlg.h">
+      <Filter>即时消息</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessManagerDlg.h">
+      <Filter>进程管理</Filter>
+    </ClInclude>
+    <ClInclude Include="CreateProcessDlg.h">
+      <Filter>进程管理\创建进程窗口</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryEditorDlg.h">
+      <Filter>进程管理\进程内存</Filter>
+    </ClInclude>
+    <ClInclude Include="ValueEditor.h">
+      <Filter>进程管理\进程内存\ValueEditor</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CrabRemoteServer.cpp">
+      <Filter>主窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="CrabRemoteServerDlg.cpp">
+      <Filter>主窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="TrueColorToolBar.cpp">
+      <Filter>真彩棒</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigFile.cpp">
+      <Filter>配置文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CServerManagerDlg.cpp">
+      <Filter>服务端管理</Filter>
+    </ClCompile>
+    <ClCompile Include="IocpServer.cpp">
+      <Filter>通信核心</Filter>
+    </ClCompile>
+    <ClCompile Include="CArray.cpp">
+      <Filter>数据结构</Filter>
+    </ClCompile>
+    <ClCompile Include="CriticalSection.cpp">
+      <Filter>数据结构</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.h">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="InstantMessageDlg.cpp">
+      <Filter>即时消息</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessManagerDlg.cpp">
+      <Filter>进程管理</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateProcessDlg.cpp">
+      <Filter>进程管理\创建进程窗口</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryEditorDlg.cpp">
+      <Filter>进程管理\进程内存</Filter>
+    </ClCompile>
+    <ClCompile Include="ValueEditor.cpp">
+      <Filter>进程管理\进程内存\ValueEditor</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CrabRemoteServer.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\CrabRemoteServer.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\CrabRemoteServer.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\toolbar2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="BitMap\ServerDialogMain.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\icon1.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="icon\接口配置.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="icon\favicon.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
