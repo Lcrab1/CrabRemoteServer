@@ -38,6 +38,9 @@ public:
 	virtual BOOL OnInitDialog();
 
 public:
+	void OnInitControlList();
+
+public:
 	CIocpServer*			m_IocpServer;
 	PCONTEXT_OBJECT			m_ContextObject;
 	static HANDLE			m_ProcessID;
