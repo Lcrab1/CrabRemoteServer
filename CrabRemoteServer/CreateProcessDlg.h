@@ -30,4 +30,5 @@ public:
 	afx_msg void OnBnClickedProcessCreateButton();
 //	afx_msg void OnClose();
 	afx_msg void OnClose();
+//	afx_msg void OnVMMap();
 };

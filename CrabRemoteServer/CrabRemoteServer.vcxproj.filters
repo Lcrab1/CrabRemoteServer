@@ -192,4 +192,9 @@
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="zlib.lib">
+      <Filter>压缩库</Filter>
+    </Library>
+  </ItemGroup>
 </Project>

@@ -241,6 +241,9 @@
     <Image Include="res\icon1.ico" />
     <Image Include="res\toolbar2.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="zlib.lib" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

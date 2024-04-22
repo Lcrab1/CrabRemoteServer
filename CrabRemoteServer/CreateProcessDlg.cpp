@@ -34,6 +34,7 @@ BEGIN_MESSAGE_MAP(CCreateProcessDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_PROCESS_CREATE_BUTTON, &CCreateProcessDlg::OnBnClickedProcessCreateButton)
 //	ON_WM_CLOSE()
 ON_WM_CLOSE()
+//ON_COMMAND(ID_32823, &CCreateProcessDlg::OnVMMap)
 END_MESSAGE_MAP()
 
 
@@ -89,3 +90,9 @@ void CCreateProcessDlg::OnClose()
 	__CProcessManagerDlg->PostMessage(WM_COMMAND, MAKEWPARAM(ID_REFRESH_PROCESS, BN_CLICKED));
 	CDialogEx::OnClose();
 }
+
+
+//void CCreateProcessDlg::OnVMMap()
+//{
+//	// TODO: 在此添加命令处理程序代码
+//}

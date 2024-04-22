@@ -54,6 +54,7 @@ public:
 
 	LRESULT OnOpenProcessCreateDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 	LRESULT OnOpenMemoryEditorDialog(WPARAM ParameterData1, LPARAM ParameterData2);
+	afx_msg void OnProcessVMMap();
 };
 
 extern CProcessManagerDlg* __CProcessManagerDlg;

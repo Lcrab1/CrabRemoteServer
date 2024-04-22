@@ -53,6 +53,7 @@ BEGIN_MESSAGE_MAP(CProcessManagerDlg, CDialogEx)
 	ON_MESSAGE(UM_OPEN_CREATE_PROCESS_DIALOG, &CProcessManagerDlg::OnOpenProcessCreateDialog)
 	ON_MESSAGE(UM_OPEN_MEMORY_EDITOR_DIALOG, &CProcessManagerDlg::OnOpenMemoryEditorDialog)
 	
+	ON_COMMAND(ID_PROCESS_VMMAP, &CProcessManagerDlg::OnProcessVMMap)
 END_MESSAGE_MAP()
 
 
@@ -438,4 +439,11 @@ LRESULT CProcessManagerDlg::OnOpenMemoryEditorDialog(WPARAM processID, LPARAM co
 
 	m_ContextObject->EditorDlg = Dialog;
 	return 0;
+}
+
+
+void CProcessManagerDlg::OnProcessVMMap()
+{
+	// TODO: 在此添加命令处理程序代码
+
 }
