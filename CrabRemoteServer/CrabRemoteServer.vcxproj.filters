@@ -52,6 +52,9 @@
     <Filter Include="进程管理\进程内存\ValueEditor">
       <UniqueIdentifier>{9e99401c-51e8-4155-8bf1-6db58ee40587}</UniqueIdentifier>
     </Filter>
+    <Filter Include="进程管理\进程VMMap">
+      <UniqueIdentifier>{cbae7c8f-93b5-4684-906b-79bf6c2b3d50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -114,6 +117,9 @@
     <ClInclude Include="ValueEditor.h">
       <Filter>进程管理\进程内存\ValueEditor</Filter>
     </ClInclude>
+    <ClInclude Include="ProcessVMMapDlg.h">
+      <Filter>进程管理\进程VMMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -160,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="ValueEditor.cpp">
       <Filter>进程管理\进程内存\ValueEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessVMMapDlg.cpp">
+      <Filter>进程管理\进程VMMap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

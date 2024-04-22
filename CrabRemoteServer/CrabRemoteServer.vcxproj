@@ -198,6 +198,7 @@
     <ClInclude Include="MemoryEditorDlg.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcessManagerDlg.h" />
+    <ClInclude Include="ProcessVMMapDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrueColorToolBar.h" />
@@ -224,6 +225,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ProcessManagerDlg.cpp" />
+    <ClCompile Include="ProcessVMMapDlg.cpp" />
     <ClCompile Include="TrueColorToolBar.cpp" />
     <ClCompile Include="ValueEditor.cpp" />
   </ItemGroup>
