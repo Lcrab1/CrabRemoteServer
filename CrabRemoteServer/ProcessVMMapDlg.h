@@ -1,5 +1,5 @@
 ﻿#pragma once
-
+#include"IocpServer.h"
 
 // CProcessVMMapDlg 对话框
 
@@ -8,7 +8,8 @@ class CProcessVMMapDlg : public CDialogEx
 	DECLARE_DYNAMIC(CProcessVMMapDlg)
 
 public:
-	CProcessVMMapDlg(CWnd* pParent = nullptr);   // 标准构造函数
+	CProcessVMMapDlg(CWnd* pParent, CIocpServer*
+		IocpServer, CONTEXT_OBJECT* ContextObject);   // 标准构造函数
 	virtual ~CProcessVMMapDlg();
 
 // 对话框数据
@@ -34,4 +35,12 @@ public:
 	CEdit m_ProcessIDEdit;
 	CEdit m_ProcessPathEdit;
 	CListCtrl m_MemoryList;
+	virtual BOOL OnInitDialog();
+
+public:
+	CIocpServer*			m_IocpServer;
+	PCONTEXT_OBJECT			m_ContextObject;
+	static HANDLE			m_ProcessID;
+	static CString          m_ProcessPath;
 };
+

@@ -4,6 +4,7 @@
 #include"CreateProcessDlg.h"
 #include"CrabRemoteServerDlg.h"
 #include"MemoryEditorDlg.h"
+#include"ProcessVMMapDlg.h"
 // CProcessManagerDlg 对话框
 
 class CProcessManagerDlg : public CDialogEx
@@ -55,6 +56,7 @@ public:
 	LRESULT OnOpenProcessCreateDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 	LRESULT OnOpenMemoryEditorDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 	afx_msg void OnProcessVMMap();
+	LRESULT OnOpenVMMapDialog(WPARAM processID, LPARAM contextObject);
 };
 
 extern CProcessManagerDlg* __CProcessManagerDlg;

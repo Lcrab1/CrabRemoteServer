@@ -52,7 +52,9 @@ BEGIN_MESSAGE_MAP(CProcessManagerDlg, CDialogEx)
 
 	ON_MESSAGE(UM_OPEN_CREATE_PROCESS_DIALOG, &CProcessManagerDlg::OnOpenProcessCreateDialog)
 	ON_MESSAGE(UM_OPEN_MEMORY_EDITOR_DIALOG, &CProcessManagerDlg::OnOpenMemoryEditorDialog)
-	
+
+	ON_MESSAGE(UM_OPEN_VMMAP_DIALOG, &CProcessManagerDlg::OnOpenVMMapDialog)
+
 	ON_COMMAND(ID_PROCESS_VMMAP, &CProcessManagerDlg::OnProcessVMMap)
 END_MESSAGE_MAP()
 
@@ -442,8 +444,50 @@ LRESULT CProcessManagerDlg::OnOpenMemoryEditorDialog(WPARAM processID, LPARAM co
 }
 
 
+
+
 void CProcessManagerDlg::OnProcessVMMap()
 {
 	// TODO: 在此添加命令处理程序代码
+	CListCtrl* ListCtrl = NULL;
+	if (m_ProcessInfoList.IsWindowVisible())
+		ListCtrl = &m_ProcessInfoList;
+	else
+		return;
 
+	int bufferLength = sizeof(HANDLE) + sizeof(BYTE);
+	LPBYTE bufferData = new BYTE[bufferLength];
+	POSITION Position = ListCtrl->GetFirstSelectedItemPosition();
+	int	Item = ListCtrl->GetNextSelectedItem(Position);
+	HANDLE ProcessIdentity = (HANDLE)ListCtrl->GetItemData(Item);	
+	bufferData[0] = CLIENT_VMMAP_SYSTEM_INFO_REQUIRE;
+	//获取目标进程id
+	CProcessVMMapDlg::m_ProcessID = ProcessIdentity;
+	//获取目标进程完整路径
+	CString Path = ListCtrl->GetItemText(Item, 2);
+	CProcessVMMapDlg::m_ProcessPath = Path;
+
+
+
+	memcpy(bufferData + sizeof(BYTE), &ProcessIdentity, sizeof(HANDLE));
+	memcpy(bufferData + sizeof(BYTE)+sizeof(HANDLE), &Path, sizeof(Path));
+	m_IocpServer->OnPrepareSending(m_ContextObject, bufferData, bufferLength);
+
+	PostMessage(UM_OPEN_VMMAP_DIALOG, (WPARAM)ProcessIdentity, (LPARAM)m_ContextObject);
+}
+
+LRESULT CProcessManagerDlg::OnOpenVMMapDialog(WPARAM processID, LPARAM contextObject)
+{
+
+	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)contextObject;
+
+	//非阻塞对话框
+	CProcessVMMapDlg* Dialog = new CProcessVMMapDlg(this, m_IocpServer, ContextObject);
+	//m_CreateProcessDlg = Dialog;
+	// 设置父窗口为卓面
+	Dialog->Create(IDD_PROCESS_VMMAP_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
+	Dialog->ShowWindow(SW_SHOW);
+
+
+	return 0;
 }
