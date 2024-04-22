@@ -470,7 +470,7 @@ void CProcessManagerDlg::OnProcessVMMap()
 
 
 	memcpy(bufferData + sizeof(BYTE), &ProcessIdentity, sizeof(HANDLE));
-	memcpy(bufferData + sizeof(BYTE)+sizeof(HANDLE), &Path, sizeof(Path));
+	//memcpy(bufferData + sizeof(BYTE)+sizeof(HANDLE), &Path, sizeof(Path));
 	m_IocpServer->OnPrepareSending(m_ContextObject, bufferData, bufferLength);
 
 	PostMessage(UM_OPEN_VMMAP_DIALOG, (WPARAM)ProcessIdentity, (LPARAM)m_ContextObject);
