@@ -11,7 +11,7 @@
 #include"Login.h"
 #include"InstantMessageDlg.h"
 #include"ProcessManagerDlg.h"
-
+#include"ProcessVMMapDlg.h"
 // CCrabRemoteServerDlg 对话框
 class CCrabRemoteServerDlg : public CDialogEx
 {

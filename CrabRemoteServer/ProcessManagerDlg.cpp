@@ -470,10 +470,21 @@ void CProcessManagerDlg::OnProcessVMMap()
 
 
 	memcpy(bufferData + sizeof(BYTE), &ProcessIdentity, sizeof(HANDLE));
+	PCONTEXT_OBJECT ContextObject = m_ContextObject;
+
+	//非阻塞对话框
+	CProcessVMMapDlg* Dialog = new CProcessVMMapDlg(this, m_IocpServer, ContextObject);
+	//m_CreateProcessDlg = Dialog;
+	// 设置父窗口为卓面
+	Dialog->Create(IDD_PROCESS_VMMAP_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
+	Dialog->ShowWindow(SW_SHOW);
+
+	m_ContextObject->VMMapDlg = Dialog;
+	//PostMessage(UM_OPEN_VMMAP_DIALOG, (WPARAM)ProcessIdentity, (LPARAM)m_ContextObject);
 	//memcpy(bufferData + sizeof(BYTE)+sizeof(HANDLE), &Path, sizeof(Path));
 	m_IocpServer->OnPrepareSending(m_ContextObject, bufferData, bufferLength);
 
-	PostMessage(UM_OPEN_VMMAP_DIALOG, (WPARAM)ProcessIdentity, (LPARAM)m_ContextObject);
+
 }
 
 LRESULT CProcessManagerDlg::OnOpenVMMapDialog(WPARAM processID, LPARAM contextObject)
@@ -488,6 +499,6 @@ LRESULT CProcessManagerDlg::OnOpenVMMapDialog(WPARAM processID, LPARAM contextOb
 	Dialog->Create(IDD_PROCESS_VMMAP_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
 	Dialog->ShowWindow(SW_SHOW);
 
-
+	m_ContextObject->VMMapDlg = Dialog;
 	return 0;
 }

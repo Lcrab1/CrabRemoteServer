@@ -57,6 +57,7 @@
 #define IDC_VMMAP_MEMORY_LIST_DIALOG    1037
 #define IDC_VMMAP_COMMIT_CHECK          1038
 #define IDC_VMMAP_RESERVE_CHECK         1039
+#define IDC_VMMAP_REFRESH_BUTTON        1040
 #define IDC_VMMAP_FREE_CHECK            1041
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
@@ -95,7 +96,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        163
 #define _APS_NEXT_COMMAND_VALUE         32828
-#define _APS_NEXT_CONTROL_VALUE         1039
+#define _APS_NEXT_CONTROL_VALUE         1041
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

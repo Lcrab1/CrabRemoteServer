@@ -74,6 +74,7 @@ typedef struct _CONTEXT_OBJECT_
 	int				  DlgIdentity;
 	HANDLE            DlgHandle;   //HWND(用户对象) HANDLE(内核对象) 
 	HANDLE            EditorDlg;   //MemoryEditor窗口
+	HANDLE		      VMMapDlg;
 
 }CONTEXT_OBJECT,*PCONTEXT_OBJECT;
 

@@ -731,10 +731,13 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 
 		break;
 	}
-
-
-
-
+	case CLIENT_VMMAP_SYSTEM_INFO_REPLY:
+	{
+		//Sleep(100);
+		CProcessVMMapDlg* Dialog = (CProcessVMMapDlg*)ContextObject->VMMapDlg;
+		Dialog->VMShowAddressList();
+		break;
+	}
 	}
 }
 

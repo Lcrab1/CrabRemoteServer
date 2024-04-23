@@ -149,9 +149,6 @@
     <ClCompile Include="CriticalSection.cpp">
       <Filter>数据结构</Filter>
     </ClCompile>
-    <ClCompile Include="Common.h">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="InstantMessageDlg.cpp">
       <Filter>即时消息</Filter>
     </ClCompile>
@@ -169,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="ProcessManagerDlg.cpp">
       <Filter>进程管理</Filter>
+    </ClCompile>
+    <ClCompile Include="Common.h">
+      <Filter>配置文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
