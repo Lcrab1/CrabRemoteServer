@@ -90,7 +90,7 @@ BOOL CProcessVMMapDlg::OnInitDialog()
 	this->m_ReserveCheckBox.SetCheck(BST_CHECKED);
 	this->m_FreeCheckBox.SetCheck(BST_UNCHECKED);
 
-	this->SetTimer(1, 5000, NULL);
+	//this->SetTimer(1, 5000, NULL);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -252,10 +252,11 @@ UINT CProcessVMMapDlg::UpdateSystemInfoRequire(LPVOID Parameter)
 	return 0;
 }
 
-void CProcessVMMapDlg::UpdateSystemInfo()
+UINT CProcessVMMapDlg::UpdateSystemInfo(LPVOID Parameter)
 {
+	CProcessVMMapDlg* thisDlg = (CProcessVMMapDlg*)Parameter;
 	DWORD	Offset = 0;
-	PBYTE BufferData = (PBYTE)(m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
+	PBYTE BufferData = (PBYTE)(thisDlg->m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
 	SYSTEM_INFO systemInfo;
 	MEMORYSTATUS memoryStatus;
 	memcpy(&systemInfo, BufferData + Offset, sizeof(SYSTEM_INFO));
@@ -263,7 +264,8 @@ void CProcessVMMapDlg::UpdateSystemInfo()
 	memcpy(&memoryStatus, BufferData + Offset, sizeof(MEMORYSTATUS));
 	Offset += sizeof(MEMORYSTATUS);
 
-	VMShowSystemInfo(systemInfo, memoryStatus);
+	thisDlg->VMShowSystemInfo(systemInfo, memoryStatus);
+	return 0;
 }
 
 void CProcessVMMapDlg::OnBnClickedVmmapRefreshButton()
