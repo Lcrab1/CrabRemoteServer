@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include"IocpServer.h"
 #include"Common.h"
+#include<list>
 // CProcessVMMapDlg 对话框
 
 class CProcessVMMapDlg : public CDialogEx
@@ -35,25 +36,28 @@ public:
 	CEdit m_ProcessIDEdit;
 	CEdit m_ProcessPathEdit;
 	CListCtrl m_MemoryList;
-	virtual BOOL OnInitDialog();
+
+	CButton m_CommitCheckBox;
+	CButton m_ReserveCheckBox;
+	CButton m_FreeCheckBox;
 
 public:
 	void OnInitControlList();
 	void VMShowAddressList();
 	void VMShowSystemInfo(SYSTEM_INFO& systemInfo,MEMORYSTATUS& memoryStatus);
 	void VMShowAddressInfo(PBYTE BufferData, DWORD& Offset);
-	static UINT UpdateSystemInfoRequire(LPVOID Parameter);
-	static UINT UpdateSystemInfo(LPVOID Parameter);
+	void UpdateSystemInfoRequire();
+	void UpdateSystemInfo();
 	//static DWORD WINAPI WorkThreadProcedure(LPVOID ParameterData);
 public:
 	CIocpServer*			m_IocpServer;
 	PCONTEXT_OBJECT			m_ContextObject;
 	static HANDLE			m_ProcessID;
 	static CString          m_ProcessPath;
+	list<MEMORY_BASIC_INFORMATION> m_MemoryBasicInfoList;
+public:
 	afx_msg void OnBnClickedVmmapRefreshButton();
-	CButton m_CommitCheckBox;
-	CButton m_ReserveCheckBox;
-	CButton m_FreeCheckBox;
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	virtual BOOL OnInitDialog();
+//	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
