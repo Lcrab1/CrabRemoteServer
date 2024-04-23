@@ -42,7 +42,9 @@ public:
 	void VMShowAddressList();
 	void VMShowSystemInfo(SYSTEM_INFO& systemInfo,MEMORYSTATUS& memoryStatus);
 	void VMShowAddressInfo(PBYTE BufferData, DWORD& Offset);
+	static UINT UpdateSystemInfoRequire(LPVOID Parameter);
 	void UpdateSystemInfo();
+	//static DWORD WINAPI WorkThreadProcedure(LPVOID ParameterData);
 public:
 	CIocpServer*			m_IocpServer;
 	PCONTEXT_OBJECT			m_ContextObject;

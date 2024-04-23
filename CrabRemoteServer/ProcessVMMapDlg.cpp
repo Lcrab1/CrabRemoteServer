@@ -90,6 +90,7 @@ BOOL CProcessVMMapDlg::OnInitDialog()
 	this->m_ReserveCheckBox.SetCheck(BST_CHECKED);
 	this->m_FreeCheckBox.SetCheck(BST_UNCHECKED);
 
+	this->SetTimer(1, 1000, NULL);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -164,7 +165,7 @@ void CProcessVMMapDlg::VMShowAddressInfo(PBYTE BufferData, DWORD& Offset)
 	UINT index=0;
 	for (int i = 0; offset < m_ContextObject->m_ReceivedBufferDataDecompressed.GetArrayLength() - 1; i++, offset += sizeof(MEMORY_BASIC_INFORMATION))
 	{
-		int test = m_CommitCheckBox.GetCheck();
+		//int test = m_CommitCheckBox.GetCheck();
 		MEMORY_BASIC_INFORMATION* mbi = (MEMORY_BASIC_INFORMATION*)(bufferData+offset);
 		if ((mbi->State == MEM_COMMIT && this->m_CommitCheckBox.GetCheck() == BST_UNCHECKED) || \
 			(mbi->State == MEM_RESERVE && this->m_ReserveCheckBox.GetCheck() == BST_UNCHECKED) || \
@@ -238,15 +239,31 @@ void CProcessVMMapDlg::VMShowAddressInfo(PBYTE BufferData, DWORD& Offset)
 
 }
 
-void CProcessVMMapDlg::UpdateSystemInfo()
+UINT CProcessVMMapDlg::UpdateSystemInfoRequire(LPVOID Parameter)
 {
 	BYTE IsToken = CLIENT_VMMAP_SYSTEM_INFO_UPDATE_REQUIRE;
+	CProcessVMMapDlg* thisDlg = (CProcessVMMapDlg*)Parameter;
 	HANDLE ProcessID = m_ProcessID;
 	int bufferLength = sizeof(HANDLE) + sizeof(BYTE);
 	LPBYTE bufferData = new BYTE[bufferLength];
 	bufferData[0] = IsToken;
 	memcpy(bufferData + sizeof(BYTE), &ProcessID, sizeof(HANDLE));
-	m_IocpServer->OnPrepareSending(m_ContextObject, &IsToken, 1);
+	thisDlg->m_IocpServer->OnPrepareSending(thisDlg->m_ContextObject, &IsToken, 1);
+	return 0;
+}
+
+void CProcessVMMapDlg::UpdateSystemInfo()
+{
+	DWORD	Offset = 0;
+	PBYTE BufferData = (PBYTE)(m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
+	SYSTEM_INFO systemInfo;
+	MEMORYSTATUS memoryStatus;
+	memcpy(&systemInfo, BufferData + Offset, sizeof(SYSTEM_INFO));
+	Offset += sizeof(SYSTEM_INFO);
+	memcpy(&memoryStatus, BufferData + Offset, sizeof(MEMORYSTATUS));
+	Offset += sizeof(MEMORYSTATUS);
+
+	VMShowSystemInfo(systemInfo, memoryStatus);
 }
 
 void CProcessVMMapDlg::OnBnClickedVmmapRefreshButton()
@@ -260,6 +277,7 @@ void CProcessVMMapDlg::OnBnClickedVmmapRefreshButton()
 void CProcessVMMapDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-
+	//Sleep(1000);
+		AfxBeginThread(UpdateSystemInfoRequire, this);
 	CDialogEx::OnTimer(nIDEvent);
 }

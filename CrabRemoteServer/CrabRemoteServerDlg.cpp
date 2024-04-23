@@ -708,7 +708,7 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		ContextObject->clientSocket = NULL;
 		Sleep(10);
 
-		break; 
+		break;
 	}
 
 	case CLIENT_PROCESS_MANAGER_REPLY:
@@ -737,6 +737,11 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		CProcessVMMapDlg* Dialog = (CProcessVMMapDlg*)ContextObject->VMMapDlg;
 		Dialog->VMShowAddressList();
 		break;
+	}
+	case CLIENT_VMMAP_SYSTEM_INFO_UPDATE_REPLY:
+	{
+		CProcessVMMapDlg* Dialog = (CProcessVMMapDlg*)ContextObject->VMMapDlg;
+		Dialog->UpdateSystemInfo();
 	}
 	}
 }
