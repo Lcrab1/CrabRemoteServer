@@ -90,7 +90,7 @@ BOOL CProcessVMMapDlg::OnInitDialog()
 	this->m_ReserveCheckBox.SetCheck(BST_CHECKED);
 	this->m_FreeCheckBox.SetCheck(BST_UNCHECKED);
 
-	this->SetTimer(1, 1000, NULL);
+	this->SetTimer(1, 5000, NULL);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
