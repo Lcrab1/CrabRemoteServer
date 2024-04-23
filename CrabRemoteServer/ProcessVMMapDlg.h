@@ -44,13 +44,15 @@ public:
 public:
 	void OnInitControlList();
 	void VMShowAddressList();
+	void VMGetMemoryBasicInfoList(PBYTE BufferData, DWORD& Offset);
+	void VMShowMemoryBasicInfoList();
 	void VMShowSystemInfo(SYSTEM_INFO& systemInfo,MEMORYSTATUS& memoryStatus);
 	void VMShowAddressInfo(PBYTE BufferData, DWORD& Offset);
-	//void UpdateSystemInfoRequire();
-	//void UpdateSystemInfo();
+	void UpdateSystemInfoRequire();
+	void UpdateSystemInfo();
 	//static DWORD WINAPI WorkThreadProcedure(LPVOID ParameterData);
-	static UINT UpdateSystemInfoRequire(LPVOID ParameterData);
-	static UINT UpdateSystemInfo(LPVOID ParameterData);
+	//static UINT UpdateSystemInfoRequire(LPVOID ParameterData);
+	//static UINT UpdateSystemInfo(LPVOID ParameterData);
 
 public:
 	CIocpServer*			m_IocpServer;

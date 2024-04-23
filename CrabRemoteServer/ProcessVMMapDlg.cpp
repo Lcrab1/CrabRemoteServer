@@ -88,9 +88,9 @@ BOOL CProcessVMMapDlg::OnInitDialog()
 	OnInitControlList();
 	this->m_CommitCheckBox.SetCheck(BST_CHECKED);
 	this->m_ReserveCheckBox.SetCheck(BST_CHECKED);
-	this->m_FreeCheckBox.SetCheck(BST_CHECKED);
+	this->m_FreeCheckBox.SetCheck(BST_UNCHECKED);
 
-	this->SetTimer(1, 5000, NULL);
+	this->SetTimer(1, 1000, NULL);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -125,6 +125,8 @@ void CProcessVMMapDlg::VMShowAddressList()
 	//遍历发送来的每一个字符别忘了他的数据结构啊 Id+进程名+0+完整名+0
 }
 
+
+
 void CProcessVMMapDlg::VMShowSystemInfo(SYSTEM_INFO& systemInfo, MEMORYSTATUS& memoryStatus)
 {
 	CString v1;
@@ -157,6 +159,99 @@ void CProcessVMMapDlg::VMShowSystemInfo(SYSTEM_INFO& systemInfo, MEMORYSTATUS& m
 	this->SetDlgItemText(IDC_ACCESS_VIRTUAL_MEMORY_EDIT, v1);
 }
 
+void CProcessVMMapDlg::VMGetMemoryBasicInfoList(PBYTE BufferData, DWORD& Offset)
+{
+	PBYTE bufferData = BufferData;
+	DWORD offset = Offset;
+	CString v1;
+	UINT index = 0;
+	for (int i = 0; offset < m_ContextObject->m_ReceivedBufferDataDecompressed.GetArrayLength() - 1; i++, offset += sizeof(MEMORY_BASIC_INFORMATION))
+	{
+		//int test = m_CommitCheckBox.GetCheck();
+		MEMORY_BASIC_INFORMATION* mbi = (MEMORY_BASIC_INFORMATION*)(bufferData + offset);
+		if ((mbi->State != MEM_COMMIT ) && (mbi->State != MEM_RESERVE ) && (mbi->State != MEM_FREE))
+			continue;
+		m_MemoryBasicInfoList.push_back(*mbi);
+	}
+}
+
+void CProcessVMMapDlg::VMShowMemoryBasicInfoList()
+{
+	CString v1;
+	UINT index = 0;
+	list<MEMORY_BASIC_INFORMATION>::iterator Travel;
+	for (Travel = this->m_MemoryBasicInfoList.begin();
+		Travel != this->m_MemoryBasicInfoList.end(); Travel++)
+	{
+		if ((Travel->State == MEM_COMMIT && this->m_CommitCheckBox.GetCheck() == BST_UNCHECKED) || \
+			(Travel->State == MEM_RESERVE && this->m_ReserveCheckBox.GetCheck() == BST_UNCHECKED) || \
+			(Travel->State == MEM_FREE && this->m_FreeCheckBox.GetCheck() == BST_UNCHECKED) || \
+			(Travel->State == 0))
+			continue;
+
+		v1.Format(_T("%d"), index + 1);
+		this->m_MemoryList.InsertItem(index, v1);
+
+		// [1]起始地址
+		v1.Format(_T("%p"), Travel->BaseAddress);
+		this->m_MemoryList.SetItemText(index, 1, v1);
+
+		// [2]大小
+		v1.Format(_T("%p"), Travel->RegionSize);
+		this->m_MemoryList.SetItemText(index, 2, v1);
+
+		// [3]状态
+		switch (Travel->State)
+		{
+		case MEM_COMMIT:	v1 = _T("提交");	break;
+		case MEM_RESERVE:	v1 = _T("保留");	break;
+		case MEM_FREE:		v1 = _T("空闲");	break;
+		}
+		this->m_MemoryList.SetItemText(index, 3, v1);
+
+		// [4]类型
+		switch (Travel->Type)
+		{
+		case MEM_IMAGE:		v1 = _T("映像");	break;
+		case MEM_PRIVATE:	v1 = _T("私有");	break;
+		case MEM_MAPPED:	v1 = _T("映射");	break;
+		}
+		this->m_MemoryList.SetItemText(index, 4, v1);
+
+		// [5]初始保护
+		switch (Travel->AllocationProtect)
+		{
+		case PAGE_READONLY:				v1 = _T("-R--");	break;
+		case PAGE_READWRITE:			v1 = _T("-RW-");	break;
+		case PAGE_WRITECOPY:			v1 = _T("-RWC");	break;
+		case PAGE_EXECUTE:				v1 = _T("E---");	break;
+		case PAGE_EXECUTE_READ:			v1 = _T("ER--");	break;
+		case PAGE_EXECUTE_READWRITE:	v1 = _T("ERW-");	break;
+		case PAGE_EXECUTE_WRITECOPY:	v1 = _T("ERWC");	break;
+		case PAGE_NOACCESS:				v1 = _T("----");	break;
+		default:						v1 = _T("----");	break;
+		}
+		this->m_MemoryList.SetItemText(index, 5, v1);
+
+
+		// [6]访问保护
+		switch (Travel->Protect)
+		{
+		case PAGE_READONLY:				v1 = _T("-R--");	break;
+		case PAGE_READWRITE:			v1 = _T("-RW-");	break;
+		case PAGE_WRITECOPY:			v1 = _T("-RWC");	break;
+		case PAGE_EXECUTE:				v1 = _T("E---");	break;
+		case PAGE_EXECUTE_READ:			v1 = _T("ER--");	break;
+		case PAGE_EXECUTE_READWRITE:	v1 = _T("ERW-");	break;
+		case PAGE_EXECUTE_WRITECOPY:	v1 = _T("ERWC");	break;
+		case PAGE_NOACCESS:				v1 = _T("----");	break;
+		default:						v1 = _T("----");	break;
+		}
+		this->m_MemoryList.SetItemText(index, 6, v1);
+
+		index++;
+	}
+}
 void CProcessVMMapDlg::VMShowAddressInfo(PBYTE BufferData, DWORD& Offset)
 {
 	//this->MemoryBasicInfoList.clear();
@@ -164,204 +259,46 @@ void CProcessVMMapDlg::VMShowAddressInfo(PBYTE BufferData, DWORD& Offset)
 	DWORD offset = Offset;
 	CString v1;
 	UINT index=0;
+
 	if (m_MemoryBasicInfoList.size() == 0) {
-		for (int i = 0; offset < m_ContextObject->m_ReceivedBufferDataDecompressed.GetArrayLength() - 1; i++, offset += sizeof(MEMORY_BASIC_INFORMATION))
-		{
-			//int test = m_CommitCheckBox.GetCheck();
-			MEMORY_BASIC_INFORMATION* mbi = (MEMORY_BASIC_INFORMATION*)(bufferData + offset);
-			if ((mbi->State == MEM_COMMIT && this->m_CommitCheckBox.GetCheck() == BST_UNCHECKED) || \
-				(mbi->State == MEM_RESERVE && this->m_ReserveCheckBox.GetCheck() == BST_UNCHECKED) || \
-				(mbi->State == MEM_FREE && this->m_FreeCheckBox.GetCheck() == BST_UNCHECKED) || \
-				(mbi->State == 0))
-				continue;
-			m_MemoryBasicInfoList.push_back(*mbi);
-			v1.Format(_T("%d"), index + 1);
-			this->m_MemoryList.InsertItem(index, v1);
-
-			// [1]起始地址
-			v1.Format(_T("%p"), mbi->BaseAddress);
-			this->m_MemoryList.SetItemText(index, 1, v1);
-
-			// [2]大小
-			v1.Format(_T("%p"), mbi->RegionSize);
-			this->m_MemoryList.SetItemText(index, 2, v1);
-
-			// [3]状态
-			switch (mbi->State)
-			{
-			case MEM_COMMIT:	v1 = _T("提交");	break;
-			case MEM_RESERVE:	v1 = _T("保留");	break;
-			case MEM_FREE:		v1 = _T("空闲");	break;
-			}
-			this->m_MemoryList.SetItemText(index, 3, v1);
-
-			// [4]类型
-			switch (mbi->Type)
-			{
-			case MEM_IMAGE:		v1 = _T("映像");	break;
-			case MEM_PRIVATE:	v1 = _T("私有");	break;
-			case MEM_MAPPED:	v1 = _T("映射");	break;
-			}
-			this->m_MemoryList.SetItemText(index, 4, v1);
-
-			// [5]初始保护
-			switch (mbi->AllocationProtect)
-			{
-			case PAGE_READONLY:				v1 = _T("-R--");	break;
-			case PAGE_READWRITE:			v1 = _T("-RW-");	break;
-			case PAGE_WRITECOPY:			v1 = _T("-RWC");	break;
-			case PAGE_EXECUTE:				v1 = _T("E---");	break;
-			case PAGE_EXECUTE_READ:			v1 = _T("ER--");	break;
-			case PAGE_EXECUTE_READWRITE:	v1 = _T("ERW-");	break;
-			case PAGE_EXECUTE_WRITECOPY:	v1 = _T("ERWC");	break;
-			case PAGE_NOACCESS:				v1 = _T("----");	break;
-			default:						v1 = _T("----");	break;
-			}
-			this->m_MemoryList.SetItemText(index, 5, v1);
-
-
-			// [6]访问保护
-			switch (mbi->Protect)
-			{
-			case PAGE_READONLY:				v1 = _T("-R--");	break;
-			case PAGE_READWRITE:			v1 = _T("-RW-");	break;
-			case PAGE_WRITECOPY:			v1 = _T("-RWC");	break;
-			case PAGE_EXECUTE:				v1 = _T("E---");	break;
-			case PAGE_EXECUTE_READ:			v1 = _T("ER--");	break;
-			case PAGE_EXECUTE_READWRITE:	v1 = _T("ERW-");	break;
-			case PAGE_EXECUTE_WRITECOPY:	v1 = _T("ERWC");	break;
-			case PAGE_NOACCESS:				v1 = _T("----");	break;
-			default:						v1 = _T("----");	break;
-			}
-			this->m_MemoryList.SetItemText(index, 6, v1);
-
-			index++;
-
-		}
+		VMGetMemoryBasicInfoList(bufferData, offset);
+		VMShowMemoryBasicInfoList();
 	}
 	else {
-		list<MEMORY_BASIC_INFORMATION>::iterator Travel;
-		for (Travel = this->m_MemoryBasicInfoList.begin();
-			Travel != this->m_MemoryBasicInfoList.end(); Travel++)
-		{
-			if ((Travel->State == MEM_COMMIT && this->m_CommitCheckBox.GetCheck() == BST_UNCHECKED) || \
-				(Travel->State == MEM_RESERVE && this->m_ReserveCheckBox.GetCheck() == BST_UNCHECKED) || \
-				(Travel->State == MEM_FREE && this->m_FreeCheckBox.GetCheck() == BST_UNCHECKED) || \
-				(Travel->State == 0))
-				continue;
-
-			v1.Format(_T("%d"), index + 1);
-			this->m_MemoryList.InsertItem(index, v1);
-
-			// [1]起始地址
-			v1.Format(_T("%p"), Travel->BaseAddress);
-			this->m_MemoryList.SetItemText(index, 1, v1);
-
-			// [2]大小
-			v1.Format(_T("%p"), Travel->RegionSize);
-			this->m_MemoryList.SetItemText(index, 2, v1);
-
-			// [3]状态
-			switch (Travel->State)
-			{
-			case MEM_COMMIT:	v1 = _T("提交");	break;
-			case MEM_RESERVE:	v1 = _T("保留");	break;
-			case MEM_FREE:		v1 = _T("空闲");	break;
-			}
-			this->m_MemoryList.SetItemText(index, 3, v1);
-
-			// [4]类型
-			switch (Travel->Type)
-			{
-			case MEM_IMAGE:		v1 = _T("映像");	break;
-			case MEM_PRIVATE:	v1 = _T("私有");	break;
-			case MEM_MAPPED:	v1 = _T("映射");	break;
-			}
-			this->m_MemoryList.SetItemText(index, 4, v1);
-
-			// [5]初始保护
-			switch (Travel->AllocationProtect)
-			{
-			case PAGE_READONLY:				v1 = _T("-R--");	break;
-			case PAGE_READWRITE:			v1 = _T("-RW-");	break;
-			case PAGE_WRITECOPY:			v1 = _T("-RWC");	break;
-			case PAGE_EXECUTE:				v1 = _T("E---");	break;
-			case PAGE_EXECUTE_READ:			v1 = _T("ER--");	break;
-			case PAGE_EXECUTE_READWRITE:	v1 = _T("ERW-");	break;
-			case PAGE_EXECUTE_WRITECOPY:	v1 = _T("ERWC");	break;
-			case PAGE_NOACCESS:				v1 = _T("----");	break;
-			default:						v1 = _T("----");	break;
-			}
-			this->m_MemoryList.SetItemText(index, 5, v1);
-
-
-			// [6]访问保护
-			switch (Travel->Protect)
-			{
-			case PAGE_READONLY:				v1 = _T("-R--");	break;
-			case PAGE_READWRITE:			v1 = _T("-RW-");	break;
-			case PAGE_WRITECOPY:			v1 = _T("-RWC");	break;
-			case PAGE_EXECUTE:				v1 = _T("E---");	break;
-			case PAGE_EXECUTE_READ:			v1 = _T("ER--");	break;
-			case PAGE_EXECUTE_READWRITE:	v1 = _T("ERW-");	break;
-			case PAGE_EXECUTE_WRITECOPY:	v1 = _T("ERWC");	break;
-			case PAGE_NOACCESS:				v1 = _T("----");	break;
-			default:						v1 = _T("----");	break;
-			}
-			this->m_MemoryList.SetItemText(index, 6, v1);
-
-			index++;
-		}
+		VMShowMemoryBasicInfoList();
 	}
-	
-
 }
 
-UINT  CProcessVMMapDlg::UpdateSystemInfoRequire(LPVOID ParameterData)
-{
-	CProcessVMMapDlg* thisDlg = (CProcessVMMapDlg*)ParameterData;
-	BYTE IsToken = CLIENT_VMMAP_SYSTEM_INFO_UPDATE_REQUIRE;
-	HANDLE ProcessID = m_ProcessID;
-	int bufferLength = sizeof(HANDLE) + sizeof(BYTE);
-	LPBYTE bufferData = new BYTE[bufferLength];
-	bufferData[0] = IsToken;
-	memcpy(bufferData + sizeof(BYTE), &ProcessID, sizeof(HANDLE));
-	thisDlg->m_IocpServer->OnPrepareSending(thisDlg->m_ContextObject, &IsToken, 1);
-	return 0;
-}
-
-//void CProcessVMMapDlg::UpdateSystemInfoRequire()
+//UINT  CProcessVMMapDlg::UpdateSystemInfoRequire(LPVOID ParameterData)
 //{
+//	CProcessVMMapDlg* thisDlg = (CProcessVMMapDlg*)ParameterData;
 //	BYTE IsToken = CLIENT_VMMAP_SYSTEM_INFO_UPDATE_REQUIRE;
 //	HANDLE ProcessID = m_ProcessID;
 //	int bufferLength = sizeof(HANDLE) + sizeof(BYTE);
 //	LPBYTE bufferData = new BYTE[bufferLength];
 //	bufferData[0] = IsToken;
 //	memcpy(bufferData + sizeof(BYTE), &ProcessID, sizeof(HANDLE));
-//	this->m_IocpServer->OnPrepareSending(this->m_ContextObject, &IsToken, 1);
-//	return;
+//	thisDlg->m_IocpServer->OnPrepareSending(thisDlg->m_ContextObject, &IsToken, 1);
+//	return 0;
 //}
 
- UINT  CProcessVMMapDlg::UpdateSystemInfo(LPVOID ParameterData)
+void CProcessVMMapDlg::UpdateSystemInfoRequire()
 {
-	CProcessVMMapDlg* thisDlg = (CProcessVMMapDlg*)ParameterData;
-	DWORD	Offset = 0;
-	PBYTE BufferData = (PBYTE)(thisDlg->m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
-	SYSTEM_INFO systemInfo;
-	MEMORYSTATUS memoryStatus;
-	memcpy(&systemInfo, BufferData + Offset, sizeof(SYSTEM_INFO));
-	Offset += sizeof(SYSTEM_INFO);
-	memcpy(&memoryStatus, BufferData + Offset, sizeof(MEMORYSTATUS));
-	Offset += sizeof(MEMORYSTATUS);
-
-	thisDlg->VMShowSystemInfo(systemInfo, memoryStatus);
-	return 0;
+	BYTE IsToken = CLIENT_VMMAP_SYSTEM_INFO_UPDATE_REQUIRE;
+	HANDLE ProcessID = m_ProcessID;
+	int bufferLength = sizeof(HANDLE) + sizeof(BYTE);
+	LPBYTE bufferData = new BYTE[bufferLength];
+	bufferData[0] = IsToken;
+	memcpy(bufferData + sizeof(BYTE), &ProcessID, sizeof(HANDLE));
+	this->m_IocpServer->OnPrepareSending(this->m_ContextObject, &IsToken, 1);
+	return;
 }
 
-//void CProcessVMMapDlg::UpdateSystemInfo()
+// UINT  CProcessVMMapDlg::UpdateSystemInfo(LPVOID ParameterData)
 //{
+//	CProcessVMMapDlg* thisDlg = (CProcessVMMapDlg*)ParameterData;
 //	DWORD	Offset = 0;
-//	PBYTE BufferData = (PBYTE)(this->m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
+//	PBYTE BufferData = (PBYTE)(thisDlg->m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
 //	SYSTEM_INFO systemInfo;
 //	MEMORYSTATUS memoryStatus;
 //	memcpy(&systemInfo, BufferData + Offset, sizeof(SYSTEM_INFO));
@@ -369,16 +306,32 @@ UINT  CProcessVMMapDlg::UpdateSystemInfoRequire(LPVOID ParameterData)
 //	memcpy(&memoryStatus, BufferData + Offset, sizeof(MEMORYSTATUS));
 //	Offset += sizeof(MEMORYSTATUS);
 //
-//	this->VMShowSystemInfo(systemInfo, memoryStatus);
-//	return;
+//	thisDlg->VMShowSystemInfo(systemInfo, memoryStatus);
+//	return 0;
 //}
+
+void CProcessVMMapDlg::UpdateSystemInfo()
+{
+	DWORD	Offset = 0;
+	PBYTE BufferData = (PBYTE)(this->m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
+	SYSTEM_INFO systemInfo;
+	MEMORYSTATUS memoryStatus;
+	memcpy(&systemInfo, BufferData + Offset, sizeof(SYSTEM_INFO));
+	Offset += sizeof(SYSTEM_INFO);
+	memcpy(&memoryStatus, BufferData + Offset, sizeof(MEMORYSTATUS));
+	Offset += sizeof(MEMORYSTATUS);
+
+	this->VMShowSystemInfo(systemInfo, memoryStatus);
+	return;
+}
 
 void CProcessVMMapDlg::OnBnClickedVmmapRefreshButton()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_MemoryList.DeleteAllItems();
 	VMShowAddressList();
-	UpdateSystemInfoRequire(this);
+	//UpdateSystemInfoRequire(this);
+	//UpdateSystemInfoRequire();
 }
 
 
@@ -394,6 +347,7 @@ void CProcessVMMapDlg::OnBnClickedVmmapRefreshButton()
 void CProcessVMMapDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	AfxBeginThread(UpdateSystemInfoRequire, this);
+	//AfxBeginThread(UpdateSystemInfoRequire, this);
+	UpdateSystemInfoRequire();
 	CDialogEx::OnTimer(nIDEvent);
 }
