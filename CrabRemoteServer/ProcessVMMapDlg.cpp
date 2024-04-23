@@ -65,6 +65,7 @@ void CProcessVMMapDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CProcessVMMapDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_VMMAP_REFRESH_BUTTON, &CProcessVMMapDlg::OnBnClickedVmmapRefreshButton)
 //	ON_WM_TIMER()
+ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -89,7 +90,7 @@ BOOL CProcessVMMapDlg::OnInitDialog()
 	this->m_ReserveCheckBox.SetCheck(BST_CHECKED);
 	this->m_FreeCheckBox.SetCheck(BST_CHECKED);
 
-	//this->SetTimer(1, 5000, NULL);
+	this->SetTimer(1, 5000, NULL);
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 异常: OCX 属性页应返回 FALSE
 }
@@ -316,22 +317,36 @@ void CProcessVMMapDlg::VMShowAddressInfo(PBYTE BufferData, DWORD& Offset)
 
 }
 
-void CProcessVMMapDlg::UpdateSystemInfoRequire()
+UINT  CProcessVMMapDlg::UpdateSystemInfoRequire(LPVOID ParameterData)
 {
+	CProcessVMMapDlg* thisDlg = (CProcessVMMapDlg*)ParameterData;
 	BYTE IsToken = CLIENT_VMMAP_SYSTEM_INFO_UPDATE_REQUIRE;
 	HANDLE ProcessID = m_ProcessID;
 	int bufferLength = sizeof(HANDLE) + sizeof(BYTE);
 	LPBYTE bufferData = new BYTE[bufferLength];
 	bufferData[0] = IsToken;
 	memcpy(bufferData + sizeof(BYTE), &ProcessID, sizeof(HANDLE));
-	this->m_IocpServer->OnPrepareSending(this->m_ContextObject, &IsToken, 1);
-	return ;
+	thisDlg->m_IocpServer->OnPrepareSending(thisDlg->m_ContextObject, &IsToken, 1);
+	return 0;
 }
 
-void CProcessVMMapDlg::UpdateSystemInfo()
+//void CProcessVMMapDlg::UpdateSystemInfoRequire()
+//{
+//	BYTE IsToken = CLIENT_VMMAP_SYSTEM_INFO_UPDATE_REQUIRE;
+//	HANDLE ProcessID = m_ProcessID;
+//	int bufferLength = sizeof(HANDLE) + sizeof(BYTE);
+//	LPBYTE bufferData = new BYTE[bufferLength];
+//	bufferData[0] = IsToken;
+//	memcpy(bufferData + sizeof(BYTE), &ProcessID, sizeof(HANDLE));
+//	this->m_IocpServer->OnPrepareSending(this->m_ContextObject, &IsToken, 1);
+//	return;
+//}
+
+ UINT  CProcessVMMapDlg::UpdateSystemInfo(LPVOID ParameterData)
 {
+	CProcessVMMapDlg* thisDlg = (CProcessVMMapDlg*)ParameterData;
 	DWORD	Offset = 0;
-	PBYTE BufferData = (PBYTE)(this->m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
+	PBYTE BufferData = (PBYTE)(thisDlg->m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
 	SYSTEM_INFO systemInfo;
 	MEMORYSTATUS memoryStatus;
 	memcpy(&systemInfo, BufferData + Offset, sizeof(SYSTEM_INFO));
@@ -339,16 +354,31 @@ void CProcessVMMapDlg::UpdateSystemInfo()
 	memcpy(&memoryStatus, BufferData + Offset, sizeof(MEMORYSTATUS));
 	Offset += sizeof(MEMORYSTATUS);
 
-	this->VMShowSystemInfo(systemInfo, memoryStatus);
-	return ;
+	thisDlg->VMShowSystemInfo(systemInfo, memoryStatus);
+	return 0;
 }
+
+//void CProcessVMMapDlg::UpdateSystemInfo()
+//{
+//	DWORD	Offset = 0;
+//	PBYTE BufferData = (PBYTE)(this->m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
+//	SYSTEM_INFO systemInfo;
+//	MEMORYSTATUS memoryStatus;
+//	memcpy(&systemInfo, BufferData + Offset, sizeof(SYSTEM_INFO));
+//	Offset += sizeof(SYSTEM_INFO);
+//	memcpy(&memoryStatus, BufferData + Offset, sizeof(MEMORYSTATUS));
+//	Offset += sizeof(MEMORYSTATUS);
+//
+//	this->VMShowSystemInfo(systemInfo, memoryStatus);
+//	return;
+//}
 
 void CProcessVMMapDlg::OnBnClickedVmmapRefreshButton()
 {
 	// TODO: 在此添加控件通知处理程序代码
 	m_MemoryList.DeleteAllItems();
 	VMShowAddressList();
-	UpdateSystemInfoRequire();
+	UpdateSystemInfoRequire(this);
 }
 
 
@@ -359,3 +389,11 @@ void CProcessVMMapDlg::OnBnClickedVmmapRefreshButton()
 //		AfxBeginThread(UpdateSystemInfoRequire, this);
 //	CDialogEx::OnTimer(nIDEvent);
 //}
+
+
+void CProcessVMMapDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	AfxBeginThread(UpdateSystemInfoRequire, this);
+	CDialogEx::OnTimer(nIDEvent);
+}

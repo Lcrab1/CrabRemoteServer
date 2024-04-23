@@ -46,9 +46,12 @@ public:
 	void VMShowAddressList();
 	void VMShowSystemInfo(SYSTEM_INFO& systemInfo,MEMORYSTATUS& memoryStatus);
 	void VMShowAddressInfo(PBYTE BufferData, DWORD& Offset);
-	void UpdateSystemInfoRequire();
-	void UpdateSystemInfo();
+	//void UpdateSystemInfoRequire();
+	//void UpdateSystemInfo();
 	//static DWORD WINAPI WorkThreadProcedure(LPVOID ParameterData);
+	static UINT UpdateSystemInfoRequire(LPVOID ParameterData);
+	static UINT UpdateSystemInfo(LPVOID ParameterData);
+
 public:
 	CIocpServer*			m_IocpServer;
 	PCONTEXT_OBJECT			m_ContextObject;
@@ -59,5 +62,6 @@ public:
 	afx_msg void OnBnClickedVmmapRefreshButton();
 	virtual BOOL OnInitDialog();
 //	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 

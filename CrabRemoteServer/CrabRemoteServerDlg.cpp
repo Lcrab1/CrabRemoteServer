@@ -741,7 +741,7 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 	case CLIENT_VMMAP_SYSTEM_INFO_UPDATE_REPLY:
 	{
 		CProcessVMMapDlg* Dialog = (CProcessVMMapDlg*)ContextObject->VMMapDlg;
-		Dialog->UpdateSystemInfo();
+		Dialog->UpdateSystemInfo(Dialog);
 		break;
 	}
 	}
