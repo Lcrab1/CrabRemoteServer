@@ -12,6 +12,7 @@
 #include"InstantMessageDlg.h"
 #include"ProcessManagerDlg.h"
 #include"ProcessVMMapDlg.h"
+#include"CmdManagerDlg.h"
 // CCrabRemoteServerDlg 对话框
 class CCrabRemoteServerDlg : public CDialogEx
 {
@@ -49,7 +50,7 @@ public:
 	int m_listenPort;
 	int m_maxConnections;
 
-	CIocpServer* m_iocpServer;
+	CIocpServer* m_IocpServer;
 
 	ULONG m_ConnectionCount = 0;
 
@@ -113,5 +114,7 @@ public:
 	afx_msg void OnRemoteShutdown();
 	VOID SendingSelectedCommand(PBYTE BufferData, ULONG BufferLength);
 	afx_msg LRESULT OnOpenInstantMessageDialog(WPARAM ParameterData1, LPARAM ParameterData2);
+	afx_msg LRESULT OnOpenCmdManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 	afx_msg LRESULT OnOpenProcessManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2);
+	
 };

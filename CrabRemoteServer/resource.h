@@ -25,6 +25,7 @@
 #define IDD_MEMORY_EDITOR_DIALOG        157
 #define IDD_CHANGE_VALUE_DIALOG         159
 #define IDD_PROCESS_VMMAP_DIALOG        161
+#define IDD_CMD_MANAGER_DIALOG          163
 #define CRAB_SERVER_INFORMATION_LIST    1000
 #define CRAB_CLIENT_INFORMATION_LIST    1001
 #define IDC_SET_LISTEN_PORT             1003
@@ -59,6 +60,8 @@
 #define IDC_VMMAP_RESERVE_CHECK         1039
 #define IDC_VMMAP_REFRESH_BUTTON        1040
 #define IDC_VMMAP_FREE_CHECK            1041
+#define IDC_CMD_MANAGER_EDIT            1041
+#define IDC_SCROLLBAR2                  1043
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
 #define ID_MENU_ADD_INFORMATION         32780
@@ -94,9 +97,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        163
+#define _APS_NEXT_RESOURCE_VALUE        165
 #define _APS_NEXT_COMMAND_VALUE         32828
-#define _APS_NEXT_CONTROL_VALUE         1041
+#define _APS_NEXT_CONTROL_VALUE         1044
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

