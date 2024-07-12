@@ -13,6 +13,7 @@
 #include"ProcessManagerDlg.h"
 #include"ProcessVMMapDlg.h"
 #include"CmdManagerDlg.h"
+#include"WindowManager.h"
 // CCrabRemoteServerDlg 对话框
 class CCrabRemoteServerDlg : public CDialogEx
 {
@@ -116,5 +117,6 @@ public:
 	afx_msg LRESULT OnOpenInstantMessageDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 	afx_msg LRESULT OnOpenCmdManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 	afx_msg LRESULT OnOpenProcessManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2);
+	LRESULT OnOpenWindowManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 	
 };

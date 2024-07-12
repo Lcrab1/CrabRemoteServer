@@ -72,10 +72,11 @@ typedef struct _CONTEXT_OBJECT_
 
 	//判读如果下面的两个成员有数据说明是二级窗口
 	int				  DlgIdentity;
-	HANDLE            DlgHandle;   //HWND(用户对象) HANDLE(内核对象) 
+	HANDLE            ProcessDlg;   //HWND(用户对象) HANDLE(内核对象) 
 	HANDLE            EditorDlg;   //MemoryEditor窗口
 	HANDLE		      VMMapDlg;
 
+	HANDLE			  WindowDlg;
 }CONTEXT_OBJECT,*PCONTEXT_OBJECT;
 
 

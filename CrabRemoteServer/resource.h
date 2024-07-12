@@ -26,6 +26,8 @@
 #define IDD_CHANGE_VALUE_DIALOG         159
 #define IDD_PROCESS_VMMAP_DIALOG        161
 #define IDD_CMD_MANAGER_DIALOG          163
+#define IDD_WINDOW_MANAGER_DIALOG       165
+#define IDR_CLIENT_WINDOW_MENU          167
 #define CRAB_SERVER_INFORMATION_LIST    1000
 #define CRAB_CLIENT_INFORMATION_LIST    1001
 #define IDC_SET_LISTEN_PORT             1003
@@ -62,6 +64,7 @@
 #define IDC_VMMAP_FREE_CHECK            1041
 #define IDC_CMD_MANAGER_EDIT            1041
 #define IDC_SCROLLBAR2                  1043
+#define IDC_WINDOW_MANAGER_LIST         1044
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
 #define ID_MENU_ADD_INFORMATION         32780
@@ -92,14 +95,21 @@
 #define ID_PROCESS_MEMORY               32820
 #define ID_PROCESS_HANDLES              32821
 #define ID_PROCESS_VMMAP                32827
+#define ID_REFRESH_WINDOW               32834
+#define IID_CLOSE_WINDOW                32835
+#define ID_CLOSE_WINDOW                 32836
+#define ID_HIDE_WINDOW                  32837
+#define ID_RECOVER_WINDOW               32838
+#define ID_MAX_WINDOW                   32839
+#define ID_MIN_WINDOW                   32840
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        165
-#define _APS_NEXT_COMMAND_VALUE         32828
-#define _APS_NEXT_CONTROL_VALUE         1044
+#define _APS_NEXT_RESOURCE_VALUE        168
+#define _APS_NEXT_COMMAND_VALUE         32841
+#define _APS_NEXT_CONTROL_VALUE         1045
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

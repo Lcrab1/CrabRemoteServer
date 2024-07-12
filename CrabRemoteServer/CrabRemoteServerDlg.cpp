@@ -142,6 +142,7 @@ BEGIN_MESSAGE_MAP(CCrabRemoteServerDlg, CDialogEx)
 	ON_MESSAGE(UM_OPEN_CMD_MANAGER_DIALOG, OnOpenCmdManagerDialog)
 	ON_MESSAGE(UM_OPEN_REMOTE_MESSAGE_DIALOG, OnOpenInstantMessageDialog)
 	ON_MESSAGE(UM_OPEN_PROCESS_MANAGER_DIALOG, OnOpenProcessManagerDialog)
+	ON_MESSAGE(UM_OPEN_WINDOW_MANAGER_DIALOG, OnOpenWindowManagerDialog)
 END_MESSAGE_MAP()
 
 
@@ -431,7 +432,8 @@ VOID CCrabRemoteServerDlg::OnButtonProcessManager()
 
 VOID CCrabRemoteServerDlg::OnButtonWindowManager()
 {
-	//MessageBox("OnButtonWindowManager");
+	BYTE	IsToken = CLIENT_WINDOW_MANAGER_REQUIRE;
+	SendingSelectedCommand(&IsToken, sizeof(BYTE));
 	return VOID();
 }
 
@@ -654,7 +656,7 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 
 			case PROCESS_MANAGER_DIALOG:
 			{
-				CProcessManagerDlg* Dialog = (CProcessManagerDlg*)ContextObject->DlgHandle;
+				CProcessManagerDlg* Dialog = (CProcessManagerDlg*)ContextObject->ProcessDlg;
 				Dialog->OnReceiveComplete();
 
 				break;
@@ -666,10 +668,9 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		return;
 	}
 
-	if (ContextObject->DlgIdentity > 0
-		&& ContextObject->DlgIdentity== CMD_MANAGER_DIALOG)
+	if (ContextObject->DlgIdentity== CMD_MANAGER_DIALOG)
 	{
-			CCmdManagerDlg* Dialog = (CCmdManagerDlg*)ContextObject->DlgHandle;
+			CCmdManagerDlg* Dialog = (CCmdManagerDlg*)ContextObject->ProcessDlg;
 			Dialog->OnReceiveComplete();
 	}
 
@@ -759,6 +760,21 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		Dialog->UpdateSystemInfo();
 		break;
 	}
+	case CLIENT_WINDOW_MANAGER_REPLY:
+	{
+		__ServerProjectDlg->PostMessage(UM_OPEN_WINDOW_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
+		break;
+
+	}
+	case CLIENT_WINDOW_MANAGER_REFRESH_REPLY:
+	{
+		CWindowManagerDlg* Dialog = (CWindowManagerDlg*)ContextObject->WindowDlg;
+		//Dialog->UpdateSystemInfo(Dialog);
+		Dialog->RefreshWindowInfoList();
+		break;
+
+	}
+
 	}
 }
 
@@ -1012,7 +1028,7 @@ LRESULT CCrabRemoteServerDlg::OnOpenCmdManagerDialog(WPARAM ParameterData1, LPAR
 	if (ContextObject != NULL)
 	{
 		ContextObject->DlgIdentity = CMD_MANAGER_DIALOG;
-		ContextObject->DlgHandle = Dialog;
+		ContextObject->ProcessDlg = Dialog;
 	}
 
 	return LRESULT();
@@ -1034,7 +1050,29 @@ LRESULT CCrabRemoteServerDlg::OnOpenProcessManagerDialog(WPARAM ParameterData1, 
 	if (ContextObject != NULL)
 	{
 		ContextObject->DlgIdentity = PROCESS_MANAGER_DIALOG;
-		ContextObject->DlgHandle = Dialog;
+		ContextObject->ProcessDlg = Dialog;
+	}
+
+	return 0;
+}
+
+LRESULT CCrabRemoteServerDlg::OnOpenWindowManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2)
+{
+	//创建一个远程消息对话框
+	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)ParameterData2;
+
+	//非阻塞对话框
+	CWindowManagerDlg* Dialog = new CWindowManagerDlg(this, m_IocpServer, ContextObject);
+	// 设置父窗口为卓面
+	Dialog->Create(IDD_WINDOW_MANAGER_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
+	Dialog->ShowWindow(SW_SHOW);
+
+
+
+	if (ContextObject != NULL)
+	{
+		ContextObject->DlgIdentity = WINDOW_MANAGER_DIALOG;
+		ContextObject->WindowDlg = Dialog;
 	}
 
 	return 0;

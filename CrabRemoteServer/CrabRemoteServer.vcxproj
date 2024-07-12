@@ -204,6 +204,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrueColorToolBar.h" />
     <ClInclude Include="ValueEditor.h" />
+    <ClInclude Include="WindowManager.h" />
     <ClInclude Include="zconf.h" />
     <ClInclude Include="zlib.h" />
   </ItemGroup>
@@ -230,6 +231,7 @@
     <ClCompile Include="ProcessVMMapDlg.cpp" />
     <ClCompile Include="TrueColorToolBar.cpp" />
     <ClCompile Include="ValueEditor.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CrabRemoteServer.rc" />

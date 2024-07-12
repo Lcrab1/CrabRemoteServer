@@ -143,7 +143,7 @@ void CCmdManagerDlg::OnClose()
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	if (m_ContextObject != NULL)
 	{
-		m_ContextObject->DlgHandle = NULL;
+		m_ContextObject->ProcessDlg = NULL;
 		m_ContextObject->DlgIdentity = 0;
 		CancelIo((HANDLE)m_ContextObject->clientSocket);
 		closesocket(m_ContextObject->clientSocket);
