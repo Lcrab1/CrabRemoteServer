@@ -78,6 +78,7 @@ typedef struct _CONTEXT_OBJECT_
 
 	HANDLE			  WindowDlg;
 	HANDLE			  RemoteDlg;
+	HANDLE			  FileDlg;
 }CONTEXT_OBJECT,*PCONTEXT_OBJECT;
 
 

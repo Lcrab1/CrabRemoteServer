@@ -144,7 +144,7 @@ BEGIN_MESSAGE_MAP(CCrabRemoteServerDlg, CDialogEx)
 	ON_MESSAGE(UM_OPEN_PROCESS_MANAGER_DIALOG, OnOpenProcessManagerDialog)
 	ON_MESSAGE(UM_OPEN_WINDOW_MANAGER_DIALOG, OnOpenWindowManagerDialog)
 	ON_MESSAGE(UM_OPEN_REMOTE_CONTROLLER_DIALOG, OnOpenRemoteControllerDialog)
-
+	ON_MESSAGE(UM_OPEN_FILE_MANAGER_DIALOG, OnOpenFileManagerDialog)
 END_MESSAGE_MAP()
 
 
@@ -448,7 +448,8 @@ VOID CCrabRemoteServerDlg::OnButtonRemoteControl()
 
 VOID CCrabRemoteServerDlg::OnButtonFileManager()
 {
-	//MessageBox("OnButtonFileManager");
+	BYTE	IsToken = CLIENT_FILE_MANAGER_REQUIRE;
+	SendingSelectedCommand(&IsToken, sizeof(BYTE));
 	return VOID();
 }
 
@@ -681,6 +682,12 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		CRemoteController* Dialog = (CRemoteController*)ContextObject->RemoteDlg;
 		Dialog->OnReceiveComplete();
 	}
+	if (ContextObject->DlgIdentity == FILE_MANAGER_DIALOG)
+	{
+		CFileManagerDlg* Dialog = (CFileManagerDlg*)ContextObject->FileDlg;
+		Dialog->OnReceiveComplete();
+	}
+
 
 	switch (ContextObject->m_ReceivedBufferDataDecompressed.GetArray(0)[0])   //[13][]
 	{
@@ -786,6 +793,13 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 
 		//接到客户端发过来的位图信息
 		__ServerProjectDlg->PostMessage(UM_OPEN_REMOTE_CONTROLLER_DIALOG, 0, (LPARAM)ContextObject);
+		break;
+	}
+	case CLIENT_FILE_MANAGER_REPLY:
+	{
+
+		//接到客户端发过来的位图信息
+		__ServerProjectDlg->PostMessage(UM_OPEN_FILE_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
 		break;
 	}
 	}
@@ -1108,6 +1122,28 @@ LRESULT CCrabRemoteServerDlg::OnOpenRemoteControllerDialog(WPARAM ParameterData1
 	{
 		ContextObject->DlgIdentity = REMOTE_CONTROL_DIALOG;
 		ContextObject->RemoteDlg = Dialog;
+	}
+
+	return 0;
+}
+
+LRESULT CCrabRemoteServerDlg::OnOpenFileManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2)
+{
+	//创建一个远程消息对话框
+	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)ParameterData2;
+
+	//非阻塞对话框
+	CFileManagerDlg* Dialog = new CFileManagerDlg(this, m_IocpServer, ContextObject);
+	// 设置父窗口为卓面
+	Dialog->Create(IDD_FILE_MANAGER_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
+	Dialog->ShowWindow(SW_SHOW);
+
+
+
+	if (ContextObject != NULL)
+	{
+		ContextObject->DlgIdentity = FILE_MANAGER_DIALOG;
+		ContextObject->FileDlg = Dialog;
 	}
 
 	return 0;

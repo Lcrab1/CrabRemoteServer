@@ -193,6 +193,7 @@
     <ClInclude Include="CrabRemoteServer.h" />
     <ClInclude Include="CrabRemoteServerDlg.h" />
     <ClInclude Include="CServerManagerDlg.h" />
+    <ClInclude Include="FileManagerDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="InstantMessageDlg.h" />
     <ClInclude Include="IocpServer.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="CrabRemoteServer.cpp" />
     <ClCompile Include="CrabRemoteServerDlg.cpp" />
     <ClCompile Include="CServerManagerDlg.cpp" />
+    <ClCompile Include="FileManagerDlg.cpp" />
     <ClCompile Include="InstantMessageDlg.cpp" />
     <ClCompile Include="IocpServer.cpp" />
     <ClCompile Include="MemoryEditorDlg.cpp" />
@@ -246,7 +248,10 @@
     </MASM>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="bitmap\bmp00001.bmp" />
+    <Image Include="BitMap\FileManager.bmp" />
     <Image Include="BitMap\ServerDialogMain.bmp" />
+    <Image Include="bitmap\toolbar2.bmp" />
     <Image Include="icon\favicon.ico" />
     <Image Include="icon\接口配置.png" />
     <Image Include="res\CrabRemoteServer.ico" />

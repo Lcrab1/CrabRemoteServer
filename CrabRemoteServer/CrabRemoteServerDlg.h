@@ -15,6 +15,7 @@
 #include"CmdManagerDlg.h"
 #include"WindowManager.h"
 #include"RemoteController.h"
+#include"FileManagerDlg.h"
 // CCrabRemoteServerDlg 对话框
 class CCrabRemoteServerDlg : public CDialogEx
 {
@@ -120,5 +121,6 @@ public:
 	afx_msg LRESULT OnOpenProcessManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 	LRESULT OnOpenWindowManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 	afx_msg LRESULT OnOpenRemoteControllerDialog(WPARAM ParameterData1, LPARAM ParameterData2);
+	afx_msg LRESULT OnOpenFileManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2);
 
 };

@@ -8,6 +8,7 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_CRABREMOTESERVER_DIALOG     102
 #define IDR_STATUSBAR_SERVER_STRING     102
+#define IDR_STATUSBAR_FILE_MANAGER_PROGRESS 103
 #define IDR_MAINFRAME                   128
 #define CRAB_DIALOG_MAIN_MENU           130
 #define IDR_TOOLBAR1                    131
@@ -30,6 +31,10 @@
 #define IDR_CLIENT_WINDOW_MENU          167
 #define IDD_DIALOG1                     170
 #define IDD_REMOTE_CONTROL_DIALOG       170
+#define IDD_FILE_MANAGER_DIALOG         172
+#define IDB_FILE_MANAGER_BITMAP         174
+#define IDR_SERVER_FILE_TOOLBAR         175
+#define IDR_CLIENT_FILE_TOOLBAR         177
 #define CRAB_SERVER_INFORMATION_LIST    1000
 #define CRAB_CLIENT_INFORMATION_LIST    1001
 #define IDC_SET_LISTEN_PORT             1003
@@ -67,6 +72,12 @@
 #define IDC_CMD_MANAGER_EDIT            1041
 #define IDC_SCROLLBAR2                  1043
 #define IDC_WINDOW_MANAGER_LIST         1044
+#define IDC_CLIENT_FILE_LIST            1045
+#define IDC_SERVER_FILE_LIST            1046
+#define IDC_SERVER_FILE_COMBO           1047
+#define IDC_CLIENT_FILE_COMBO           1048
+#define IDC_CLIENT_POSITION_STATIC      1049
+#define IDC_SERVER_POSITION_STATIC      1050
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
 #define ID_MENU_ADD_INFORMATION         32780
@@ -104,14 +115,26 @@
 #define ID_RECOVER_WINDOW               32838
 #define ID_MAX_WINDOW                   32839
 #define ID_MIN_WINDOW                   32840
+#define IDT_SERVER_FILE_PREVIOUS        32841
+#define IDT_SERVER_FILE_VIEW            32842
+#define IDT_SERVER_FILE_DELETE          32843
+#define IDT_SERVER_NEW_FOLDER           32844
+#define IDT_SERVER_FILE_FINDER          32845
+#define IDT_SERVER_FILE_STOP            32846
+#define IDT_CLIENT_FILE_PREVIOUS        32847
+#define IDT_CLIENT_FILE_VIEW            32848
+#define IDT_CLIENT_FILE_DELETE          32849
+#define IDT_CLIENT_NEW_FOLDER           32850
+#define IDT_CLIENT_FILE_FINDER          32851
+#define IDT_CLIENT_FILE_STOP            32852
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        172
-#define _APS_NEXT_COMMAND_VALUE         32841
-#define _APS_NEXT_CONTROL_VALUE         1045
+#define _APS_NEXT_RESOURCE_VALUE        179
+#define _APS_NEXT_COMMAND_VALUE         32853
+#define _APS_NEXT_CONTROL_VALUE         1050
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

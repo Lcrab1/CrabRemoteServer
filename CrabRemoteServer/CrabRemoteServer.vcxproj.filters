@@ -64,6 +64,9 @@
     <Filter Include="远程控制">
       <UniqueIdentifier>{32239174-9e98-432a-a35d-ab3e0f08ee2e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="文件管理">
+      <UniqueIdentifier>{e4d77917-74d9-4742-a009-35ad00869644}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -138,6 +141,9 @@
     <ClInclude Include="RemoteController.h">
       <Filter>远程控制</Filter>
     </ClInclude>
+    <ClInclude Include="FileManagerDlg.h">
+      <Filter>文件管理</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -197,6 +203,9 @@
     <ClCompile Include="RemoteController.cpp">
       <Filter>远程控制</Filter>
     </ClCompile>
+    <ClCompile Include="FileManagerDlg.cpp">
+      <Filter>文件管理</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CrabRemoteServer.rc">
@@ -225,6 +234,15 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="icon\favicon.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="BitMap\FileManager.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="bitmap\toolbar2.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="bitmap\bmp00001.bmp">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
