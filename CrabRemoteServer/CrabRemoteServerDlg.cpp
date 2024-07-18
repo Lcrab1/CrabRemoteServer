@@ -143,6 +143,8 @@ BEGIN_MESSAGE_MAP(CCrabRemoteServerDlg, CDialogEx)
 	ON_MESSAGE(UM_OPEN_REMOTE_MESSAGE_DIALOG, OnOpenInstantMessageDialog)
 	ON_MESSAGE(UM_OPEN_PROCESS_MANAGER_DIALOG, OnOpenProcessManagerDialog)
 	ON_MESSAGE(UM_OPEN_WINDOW_MANAGER_DIALOG, OnOpenWindowManagerDialog)
+	ON_MESSAGE(UM_OPEN_REMOTE_CONTROLLER_DIALOG, OnOpenRemoteControllerDialog)
+
 END_MESSAGE_MAP()
 
 
@@ -439,7 +441,8 @@ VOID CCrabRemoteServerDlg::OnButtonWindowManager()
 
 VOID CCrabRemoteServerDlg::OnButtonRemoteControl()
 {
-	//MessageBox("OnButtonRemoteControl");
+	BYTE	IsToken = CLIENT_REMOTE_CONTROLLER_REQUIRE;
+	SendingSelectedCommand(&IsToken, sizeof(BYTE));
 	return VOID();
 }
 
@@ -673,7 +676,11 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 			CCmdManagerDlg* Dialog = (CCmdManagerDlg*)ContextObject->ProcessDlg;
 			Dialog->OnReceiveComplete();
 	}
-
+	if (ContextObject->DlgIdentity == REMOTE_CONTROL_DIALOG)
+	{
+		CRemoteController* Dialog = (CRemoteController*)ContextObject->RemoteDlg;
+		Dialog->OnReceiveComplete();
+	}
 
 	switch (ContextObject->m_ReceivedBufferDataDecompressed.GetArray(0)[0])   //[13][]
 	{
@@ -774,7 +781,13 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		break;
 
 	}
+	case CLIENT_REMOTE_CONTROLLER_REPLY:
+	{
 
+		//接到客户端发过来的位图信息
+		__ServerProjectDlg->PostMessage(UM_OPEN_REMOTE_CONTROLLER_DIALOG, 0, (LPARAM)ContextObject);
+		break;
+	}
 	}
 }
 
@@ -1073,6 +1086,28 @@ LRESULT CCrabRemoteServerDlg::OnOpenWindowManagerDialog(WPARAM ParameterData1, L
 	{
 		ContextObject->DlgIdentity = WINDOW_MANAGER_DIALOG;
 		ContextObject->WindowDlg = Dialog;
+	}
+
+	return 0;
+}
+
+LRESULT CCrabRemoteServerDlg::OnOpenRemoteControllerDialog(WPARAM ParameterData1, LPARAM ParameterData2)
+{
+	//创建一个远程消息对话框
+	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)ParameterData2;
+
+	//非阻塞对话框
+	CRemoteController* Dialog = new CRemoteController(this, m_IocpServer, ContextObject);
+	// 设置父窗口为卓面
+	Dialog->Create(IDD_REMOTE_CONTROL_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
+	Dialog->ShowWindow(SW_SHOW);
+
+
+
+	if (ContextObject != NULL)
+	{
+		ContextObject->DlgIdentity = REMOTE_CONTROL_DIALOG;
+		ContextObject->RemoteDlg = Dialog;
 	}
 
 	return 0;

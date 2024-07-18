@@ -61,6 +61,9 @@
     <Filter Include="窗口管理">
       <UniqueIdentifier>{9822ee63-37f5-4b90-9aba-ac1d2cea4e8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="远程控制">
+      <UniqueIdentifier>{32239174-9e98-432a-a35d-ab3e0f08ee2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="WindowManager.h">
       <Filter>窗口管理</Filter>
     </ClInclude>
+    <ClInclude Include="RemoteController.h">
+      <Filter>远程控制</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -188,6 +194,9 @@
     <ClCompile Include="WindowManager.cpp">
       <Filter>窗口管理</Filter>
     </ClCompile>
+    <ClCompile Include="RemoteController.cpp">
+      <Filter>远程控制</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CrabRemoteServer.rc">
@@ -223,5 +232,10 @@
     <Library Include="zlib.lib">
       <Filter>压缩库</Filter>
     </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="x86.asm">
+      <Filter>远程控制</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

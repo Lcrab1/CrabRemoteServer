@@ -77,6 +77,7 @@ typedef struct _CONTEXT_OBJECT_
 	HANDLE		      VMMapDlg;
 
 	HANDLE			  WindowDlg;
+	HANDLE			  RemoteDlg;
 }CONTEXT_OBJECT,*PCONTEXT_OBJECT;
 
 
