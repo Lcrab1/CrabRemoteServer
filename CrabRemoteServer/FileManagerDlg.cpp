@@ -5,8 +5,7 @@
 #include "CrabRemoteServer.h"
 #include "FileManagerDlg.h"
 #include "afxdialogex.h"
-#include"Common.h"
-
+ULONG CFileManagerDlg::m_TransferMode = TRANSFER_MODE_NORMAL;
 // CFileManagerDlg 对话框
 static UINT __Indicators[] =
 {
@@ -19,18 +18,28 @@ IMPLEMENT_DYNAMIC(CFileManagerDlg, CDialogEx)
 
 CFileManagerDlg::CFileManagerDlg(CWnd* pParent, CIocpServer*
 	IocpServer, CONTEXT_OBJECT* ContextObject)
-	: CDialogEx(IDD_FILE_MANAGER_DIALOG, pParent)
+	:CDialogEx(IDD_FILE_MANAGER_DIALOG, pParent),
+	//m_TransferMode(TRANSFER_MODE_NORMAL), // 使用初始化列表初始化 m_TransferMode
+	m_IocpServer(IocpServer),
+	m_ContextObject(ContextObject),
+	m_IsDragging(FALSE),
+	m_IsStop(FALSE),
+	m_TransferFileLength(0),
+	m_Counter(0)
 {
 	m_IconHwnd = LoadIcon(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_MAINFRAME));
 	m_IocpServer = IocpServer;
 	m_ContextObject = ContextObject;
-
-
+	m_CursorHwnd = (HCURSOR)AfxGetApp()->LoadStandardCursor(IDC_CROSS);
+	SetCursor(m_CursorHwnd);
+	//m_TransferMode = TRANSFER_MODE_NORMAL;
 
 	memset(m_ClientData, 0, sizeof(m_ClientData));  //初始化内存
+	memset(m_ServerData, 0, sizeof(m_ServerData));  //初始化内存
+	//int x = ContextObject->m_ReceivedBufferDataDecompressed.GetArrayLength();
 	memcpy(m_ClientData, ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1),
 		ContextObject->m_ReceivedBufferDataDecompressed.GetArrayLength() - 1);
-
+	//m_TransferMode = TRANSFER_MODE_NORMAL;
 	//文件类型
 	SHFILEINFO	v1;   //
 	//卷图标
@@ -90,6 +99,19 @@ void CFileManagerDlg::OnReceiveComplete(void)
 	{
 		FixedClientFileList(m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(),
 			m_ContextObject->m_ReceivedBufferDataDecompressed.GetArrayLength() - 1);
+		break;
+	}
+	case CLIENT_FILE_MANAGER_TRANSFER_MODE_REQUIRE:
+	{
+		//在客户端中发现有重名文件
+		SendTransferMode();
+
+
+		break;
+	}
+	case CLIENT_FILE_MANAGER_FILE_DATA_CONTINUE:
+	{
+		SendServerFileDataToClient();
 		break;
 	}
 	}
@@ -296,7 +318,7 @@ VOID CFileManagerDlg::FixedServerFileList(CString DirectoryFullPath)
 	if (DirectoryFullPath == _T(".."))   //返回上一层
 	{
 		//返回上一层目录
-		m_ServerFileFullPath = GetParentDirectory(m_ServerFileFullPath);
+		m_ServerFullPath = GetParentDirectory(m_ServerFullPath);
 
 	}
 	//刷新当前用
@@ -309,15 +331,15 @@ VOID CFileManagerDlg::FixedServerFileList(CString DirectoryFullPath)
 		//HelloWorld    1
 
 
-		m_ServerFileFullPath += DirectoryFullPath;      //记录完整路径
-		if (m_ServerFileFullPath.Right(1) != "\\")
+		m_ServerFullPath += DirectoryFullPath;      //记录完整路径
+		if (m_ServerFullPath.Right(1) != "\\")
 		{
 
-			m_ServerFileFullPath += "\\";
+			m_ServerFullPath += "\\";
 		}
 	}
 
-	if (m_ServerFileFullPath.GetLength() == 0)
+	if (m_ServerFullPath.GetLength() == 0)
 	{
 		FixedServerVolumeList();   //刷新卷信息
 		return;
@@ -325,7 +347,7 @@ VOID CFileManagerDlg::FixedServerFileList(CString DirectoryFullPath)
 
 
 	//将最终的文件路径放入到控件中
-	m_ServerFileCombo.InsertString(0, m_ServerFileFullPath);
+	m_ServerFileCombo.InsertString(0, m_ServerFullPath);
 	m_ServerFileCombo.SetCurSel(0);
 
 
@@ -357,7 +379,7 @@ VOID CFileManagerDlg::FixedServerFileList(CString DirectoryFullPath)
 	{
 		CFileFind	FileFind;    //文件搜索类
 		BOOL		IsLoop;
-		IsLoop = FileFind.FindFile(m_ServerFileFullPath + _T("*.*"));   //D:\*.*   代表一切
+		IsLoop = FileFind.FindFile(m_ServerFullPath + _T("*.*"));   //D:\*.*   代表一切
 		while (IsLoop)
 		{
 			IsLoop = FileFind.FindNextFile();
@@ -520,20 +542,20 @@ VOID CFileManagerDlg::GetClientFileList(CString DirectoryFullPath)
 
 	if (DirectoryFullPath == "..")
 	{
-		m_ClientFileFullPath = GetParentDirectory(m_ClientFileFullPath);
+		m_ClientFullPath = GetParentDirectory(m_ClientFullPath);
 	}
 
 	else if (DirectoryFullPath != ".")
 	{
-		m_ClientFileFullPath += DirectoryFullPath;
-		if (m_ClientFileFullPath.Right(1) != "\\")
+		m_ClientFullPath += DirectoryFullPath;
+		if (m_ClientFullPath.Right(1) != "\\")
 		{
-			m_ClientFileFullPath += "\\";
+			m_ClientFullPath += "\\";
 		}
 	}
 
 
-	if (m_ClientFileFullPath.GetLength() == 0)
+	if (m_ClientFullPath.GetLength() == 0)
 	{
 		//到达根目录实际就是要刷新卷
 		FixedClientVolumeList();
@@ -541,12 +563,12 @@ VOID CFileManagerDlg::GetClientFileList(CString DirectoryFullPath)
 	}
 
 
-	ULONG	BufferLength = m_ClientFileFullPath.GetLength() + 2;
+	ULONG	BufferLength = m_ClientFullPath.GetLength() + 2;
 	BYTE* BufferData = (BYTE*)new BYTE[BufferLength];
 
 
 	BufferData[0] = CLIENT_FILE_MANAGER_FILE_LIST_REQUIRE;
-	memcpy(BufferData + 1, m_ClientFileFullPath.GetBuffer(0), BufferLength - 1);
+	memcpy(BufferData + 1, m_ClientFullPath.GetBuffer(0), BufferLength - 1);
 	m_IocpServer->OnPrepareSending(m_ContextObject, BufferData, BufferLength);
 	delete[] BufferData;
 	BufferData = NULL;
@@ -562,6 +584,9 @@ VOID CFileManagerDlg::GetClientFileList(CString DirectoryFullPath)
 BEGIN_MESSAGE_MAP(CFileManagerDlg, CDialogEx)
 	ON_NOTIFY(NM_DBLCLK, IDC_SERVER_FILE_LIST, &CFileManagerDlg::OnNMDblclkServerFileList)
 	ON_NOTIFY(NM_DBLCLK, IDC_CLIENT_FILE_LIST, &CFileManagerDlg::OnNMDblclkClientFileList)
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_NOTIFY(LVN_BEGINDRAG, IDC_SERVER_FILE_LIST, &CFileManagerDlg::OnLvnBegindragServerFileList)
 END_MESSAGE_MAP()
 
 
@@ -731,4 +756,440 @@ void CFileManagerDlg::OnNMDblclkClientFileList(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 	GetClientFileList();  //向客户端发消息
 	*pResult = 0;
+}
+
+
+void CFileManagerDlg::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (m_IsDragging)
+	{
+		ReleaseCapture();  //释放鼠标的捕获
+
+		m_IsDragging = FALSE;
+
+		CPoint Point(point);    //获得当前鼠标的位置相对于整个屏幕的
+		ClientToScreen(&Point); //转换成相对于当前用户的窗口的位置
+
+		CWnd* v1 = WindowFromPoint(Point);   //获得当前的鼠标下方有无控件
+
+
+		if (v1->IsKindOf(RUNTIME_CLASS(CListCtrl))) //如果是一个ListControl
+		{
+			m_Drop = (CListCtrl*)v1;       //保存当前的窗口句柄
+
+			DropFileOnList(); //处理传输
+		}
+	}
+	CDialogEx::OnLButtonUp(nFlags, point);
+}
+
+
+void CFileManagerDlg::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (m_IsDragging)    //我们只对拖拽感兴趣
+	{
+		CPoint Point(point);	 //获得鼠标位置
+		ClientToScreen(&Point);  //转成相对于自己屏幕的
+
+	//根据鼠标获得窗口句柄
+		CWnd* v1 = WindowFromPoint(Point);   //值所在位置 有没有控件
+
+		if (v1->IsKindOf(RUNTIME_CLASS(CListCtrl)))   //属于我们的窗口范围内
+		{
+			SetCursor(m_CursorHwnd);
+
+			return;
+		}
+		else
+		{
+			SetCursor(LoadCursor(NULL, IDC_NO));   //超出窗口换鼠标样式
+		}
+	}
+	CDialogEx::OnMouseMove(nFlags, point);
+}
+
+
+void CFileManagerDlg::OnLvnBegindragServerFileList(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	if (m_ServerFullPath.IsEmpty() || m_ClientFullPath.IsEmpty())
+	{
+		return;
+	}
+	if (m_ServerFileList.GetSelectedCount() > 1)
+	{
+		//如果选择多项
+		m_CursorHwnd = AfxGetApp()->LoadCursor(IDC_MULTI_CURSOR);
+	}
+	else
+	{
+		//如果选择单项
+		m_CursorHwnd = AfxGetApp()->LoadCursor(IDC_SINGLE_CURSOR);
+	}
+
+
+	m_IsDragging = TRUE;
+	m_Drag = &m_ServerFileList;
+	m_Drop = &m_ClientFileList;
+
+	SetCapture();
+	*pResult = 0;
+}
+
+VOID CFileManagerDlg::CopyServerFileToClient()
+{
+	//定义一哥模板
+	m_ServerFileToClientJob.RemoveAll();
+	POSITION Position = m_ServerFileList.GetFirstSelectedItemPosition();
+	while (Position)
+	{
+		int Item = m_ServerFileList.GetNextSelectedItem(Position);
+		CString	FileFullPath = NULL;
+
+
+		FileFullPath = m_ServerFullPath + m_ServerFileList.GetItemText(Item, 0);   //C:\HelloWorld\\
+
+
+		//如果是目录
+		if (m_ServerFileList.GetItemData(Item))   //获得选项的隐藏数据
+		{
+			FileFullPath += '\\';   /*  C:\HelloWorld\\  */
+			FixedServerFileToClient(FileFullPath.GetBuffer(0));
+		}
+		else
+		{
+
+			//打开文件判断是否合法
+			HANDLE FileHanlde = CreateFile(FileFullPath, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+				NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+
+			if (FileHanlde == INVALID_HANDLE_VALUE)
+			{
+				continue;
+			}
+			m_ServerFileToClientJob.AddTail(FileFullPath);
+
+			CloseHandle(FileHanlde);
+		}
+
+	}
+	if (m_ServerFileToClientJob.IsEmpty())
+	{
+		//如果选择有空目录是不处理
+		::MessageBox(m_hWnd, "文件夹为空", "警告", MB_OK | MB_ICONWARNING);
+		return;
+	}
+	EnableControl(FALSE);
+	SendServerFileInformationToClient(); //发送第一个任务
+	return VOID();
+}
+
+BOOL CFileManagerDlg::FixedServerFileToClient(LPCTSTR DircetoryFullPath)
+{
+	CHAR	BufferData[MAX_PATH];
+	CHAR* v1 = NULL;
+	memset(BufferData, 0, sizeof(BufferData));
+
+	if (DircetoryFullPath[strlen(DircetoryFullPath) - 1] != '\\')
+	{
+		v1 = "\\";
+	}
+
+	else
+	{
+		v1 = "";
+	}
+
+	sprintf(BufferData, "%s%s*.*", DircetoryFullPath, v1);   // C:\HelloWorld\*.*    .  .. 1 2 3.txt
+
+	WIN32_FIND_DATA	v2;
+	HANDLE FileHandle = FindFirstFile(BufferData, &v2);
+	if (FileHandle == INVALID_HANDLE_VALUE) //如果没有找到或查找失败
+		return FALSE;
+	do
+	{
+		//过滤这两个目录 '.'和'..'
+		if (v2.cFileName[0] == '.')
+		{
+			continue;
+		}
+
+		if (v2.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			CHAR v3[MAX_PATH];
+			sprintf(v3, "%s%s%s", DircetoryFullPath, v1, v2.cFileName);
+			FixedServerFileToClient(v3); //如果找到的是目录，则进入此目录进行递归 
+		}
+		else
+		{
+			CString FileFullPath;
+			FileFullPath.Format("%s%s%s", DircetoryFullPath, v1, v2.cFileName);   //c:\helloWorld\3.txt   [] [] [] [] [] []
+			m_ServerFileToClientJob.AddTail(FileFullPath);
+			// 对文件进行操作 
+		}
+	} while (FindNextFile(FileHandle, &v2));
+	FindClose(FileHandle); //关闭查找句柄
+	return true;
+}
+
+void CFileManagerDlg::EnableControl(BOOL IsEnable)
+{
+	m_ServerFileList.EnableWindow(IsEnable);
+	m_ClientFileList.EnableWindow(IsEnable);
+	m_ServerFileCombo.EnableWindow(IsEnable);
+	m_ClientFileCombo.EnableWindow(IsEnable);
+}
+
+BOOL CFileManagerDlg::SendServerFileInformationToClient()
+{
+	if (m_ServerFileToClientJob.IsEmpty())
+	{
+		return FALSE;
+	}
+	//C:\   m_ServerFullPath                       D:\  m_ClientFullPath
+	//C;\1.txt
+
+
+	CString	v1 = m_ClientFullPath;  //确认目标路径的父目录
+
+
+	m_SourceFullPath = m_ServerFileToClientJob.GetHead();    //获得第一个任务的名称 
+
+	DWORD	FileSizeHigh = 0;
+	DWORD	FileSizeLow = 0;
+
+	HANDLE	FileHandle;
+	CString	v2 = m_SourceFullPath;               //远程文件
+
+	//得到要保存到的远程的文件路径
+	v2.Replace(m_ServerFullPath, m_ClientFullPath);  //D;\1.txt    C:\     D:\ 
+	m_DestinationFullPath = v2;  //修正好的名字
+
+
+	//E:\Hello\Hello\World\1.txt                           
+
+	//打开本地文件
+	FileHandle = CreateFile(m_SourceFullPath.GetBuffer(0), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);   //获得要发送文件的大小
+	if (FileHandle == INVALID_HANDLE_VALUE)
+	{
+		return FALSE;
+	}
+	//大文件传送
+	//获取文件大小
+	FileSizeLow = GetFileSize(FileHandle, &FileSizeHigh);
+
+	m_TransferFileLength = (FileSizeHigh * (MAXDWORD + 1)) + FileSizeLow;
+	CloseHandle(FileHandle);
+	//构造数据包，发送文件长度
+
+
+	ULONG  BufferLength = v2.GetLength() + 10;
+	BYTE* BufferData = (BYTE*)LocalAlloc(LPTR, BufferLength);
+	memset(BufferData, 0, BufferLength);
+
+	BufferData[0] = CLIENT_FILE_MANAGER_SEND_FILE_INFORMATION;
+
+	//[Flag 0001 0001 E:\1.txt\0 ]
+
+
+
+	memcpy(BufferData + 1, &FileSizeHigh, sizeof(DWORD));
+	memcpy(BufferData + 5, &FileSizeLow, sizeof(DWORD));
+
+
+
+	memcpy(BufferData + 9, v2.GetBuffer(0), v2.GetLength() + 1);
+
+	m_IocpServer->OnPrepareSending(m_ContextObject, BufferData, BufferLength);
+
+	LocalFree(BufferData);
+
+	//从下载任务列表中删除自己
+	m_ServerFileToClientJob.RemoveHead();
+	return TRUE;
+}
+
+VOID CFileManagerDlg::SendServerFileDataToClient()
+{
+	FILE_SIZE* v1 = (FILE_SIZE*)(m_ContextObject->m_ReceivedBufferDataDecompressed.GetArray(1));
+	LONG	FileSizeHigh = v1->FileSizeHigh;    //0
+	LONG	FileSizeLow = v1->FileSizeLow;      //0
+
+	m_Counter = MAKEINT64(v1->FileSizeLow, v1->FileSizeHigh);   //0
+
+	ShowProgress(); //通知进度条
+
+	if (m_Counter == m_TransferFileLength || m_IsStop || v1->FileSizeLow == -1)
+		//FileSize->SizeLow == -1  是对方选择了跳过    m_Counter == m_TransferFileLength  完成当前的传输
+	{
+		EndCopyServerFileToClient(); //进行下个任务的传送如果存在
+		return;
+	}
+
+	HANDLE	FileHandle;
+	FileHandle = CreateFile(m_SourceFullPath.GetBuffer(0), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	if (FileHandle == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+	//获取什么地方的数据
+	SetFilePointer(FileHandle, FileSizeLow, &FileSizeHigh, FILE_BEGIN);   //8192    4G  300  设置文件大小
+
+	int		v3 = 9; // 1 + 4 + 4  数据包头部大小，为固定的9
+
+	DWORD	NumberOfBytesToRead = MAX_SEND_BUFFER - v3;
+	DWORD	NumberOfBytesRead = 0;
+	BYTE* BufferData = (BYTE*)LocalAlloc(LPTR, MAX_SEND_BUFFER);
+
+	if (BufferData == NULL)
+	{
+		CloseHandle(FileHandle);
+		return;
+	}
+	BufferData[0] = CLIENT_FILE_MANAGER_FILE_DATA;
+	memcpy(BufferData + 1, &FileSizeHigh, sizeof(FileSizeHigh));
+	memcpy(BufferData + 5, &FileSizeLow, sizeof(FileSizeLow));
+
+	//从文件中读取数据
+	ReadFile(FileHandle, BufferData + v3, NumberOfBytesToRead, &NumberOfBytesRead, NULL);
+	CloseHandle(FileHandle);
+
+	if (NumberOfBytesRead > 0)
+	{
+		ULONG	BufferLength = NumberOfBytesRead + v3;
+		m_IocpServer->OnPrepareSending(m_ContextObject, BufferData, BufferLength);
+	}
+	LocalFree(BufferData);
+}
+
+void CFileManagerDlg::ShowProgress()
+{
+	if ((int)m_Counter == -1)
+	{
+		m_Counter = m_TransferFileLength;
+	}
+
+	int	Progress = (float)(m_Counter * 100) / m_TransferFileLength;
+	m_ProgressCtrl->SetPos(Progress);
+
+
+	if (m_Counter == m_TransferFileLength)
+	{
+		m_Counter = m_TransferFileLength = 0;
+	}
+}
+
+VOID CFileManagerDlg::SendTransferMode()
+{
+	CFileTransferModeDlg	Dialog(this);
+	Dialog.m_FileFullPath = m_DestinationFullPath;
+	switch (Dialog.DoModal())
+	{
+	case IDC_COVER_BUTTON:
+	{
+		m_TransferMode = TRANSFER_MODE_COVER;
+		break;
+	}
+	case IDC_ALL_COVER_BUTTON:
+	{
+		m_TransferMode = TRANSFER_MODE_COVER_ALL;
+		break;
+	}
+
+	case IDC_JMP_BUTTON:
+	{
+		m_TransferMode = TRANSFER_MODE_JUMP;
+		break;
+	}
+
+	case IDC_ALL_JMP_BUTTON:
+	{
+		m_TransferMode = TRANSFER_MODE_JUMP_ALL;
+		break;
+	}
+
+	case IDC_CANCEL_BUTTON:
+	{
+		m_TransferMode = TRANSFER_MODE_CANCEL;
+		break;
+
+	}
+
+	}
+	if (m_TransferMode == TRANSFER_MODE_CANCEL)
+	{
+
+		EndCopyServerFileToClient();
+		return;
+	}
+
+	if (m_TransferMode == TRANSFER_MODE_NORMAL)
+	{
+		//关闭窗口
+
+
+		m_IsStop = TRUE;
+		EndCopyServerFileToClient();
+		return;
+
+	}
+
+	BYTE IsToken[5];
+	IsToken[0] = CLIENT_FILE_MANAGER_SET_TRANSFER_MODE;
+	memcpy(IsToken + 1, &m_TransferMode, sizeof(m_TransferMode));
+	m_IocpServer->OnPrepareSending(m_ContextObject, (unsigned char*)&IsToken, sizeof(IsToken));
+}
+
+VOID CFileManagerDlg::EndCopyServerFileToClient()
+{
+	m_Counter = 0;
+	m_TransferFileLength = 0;
+
+	//进度条
+	ShowProgress();
+	if (m_ServerFileToClientJob.IsEmpty() || m_IsStop)
+	{
+
+		m_ServerFileToClientJob.RemoveAll();
+		m_IsStop = FALSE;
+		EnableControl(TRUE);       //用户可以点击控件
+
+
+		m_TransferMode = TRANSFER_MODE_NORMAL;
+
+		GetClientFileList(".");   //刷新当前文件路径列表  //[..][.]
+	}
+	else
+	{
+		Sleep(5);
+
+		SendServerFileInformationToClient();   //正常的传输完毕 进行下一个文件的传输
+	}
+	return;
+}
+
+VOID CFileManagerDlg::DropFileOnList()
+{
+	//判断是从哪里拷贝数据到哪里
+	if (m_Drag == m_Drop)
+	{
+		return;
+	}
+
+	if ((CWnd*)m_Drop == &m_ServerFileList)       //客户端向主控端
+	{
+
+		//OnCopyClientFileToServer();
+	}
+	else if ((CWnd*)m_Drop == &m_ClientFileList)  //主控端向客户端
+	{
+		CopyServerFileToClient();
+	}
+	else
+	{
+		return;
+	}
 }

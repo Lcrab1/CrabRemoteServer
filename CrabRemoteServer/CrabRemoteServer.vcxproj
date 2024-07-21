@@ -194,6 +194,7 @@
     <ClInclude Include="CrabRemoteServerDlg.h" />
     <ClInclude Include="CServerManagerDlg.h" />
     <ClInclude Include="FileManagerDlg.h" />
+    <ClInclude Include="FileTransferModeDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="InstantMessageDlg.h" />
     <ClInclude Include="IocpServer.h" />
@@ -222,6 +223,7 @@
     <ClCompile Include="CrabRemoteServerDlg.cpp" />
     <ClCompile Include="CServerManagerDlg.cpp" />
     <ClCompile Include="FileManagerDlg.cpp" />
+    <ClCompile Include="FileTransferModeDlg.cpp" />
     <ClCompile Include="InstantMessageDlg.cpp" />
     <ClCompile Include="IocpServer.cpp" />
     <ClCompile Include="MemoryEditorDlg.cpp" />
@@ -242,6 +244,9 @@
     <ResourceCompile Include="CrabRemoteServer.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Cursor\MultiDrag.cur" />
+    <None Include="Cursor\SingleDrag.cur" />
+    <None Include="icon\cursor1.cur" />
     <None Include="res\CrabRemoteServer.rc2" />
     <MASM Include="x86.asm">
       <FileType>Document</FileType>

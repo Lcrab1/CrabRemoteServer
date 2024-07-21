@@ -144,6 +144,9 @@
     <ClInclude Include="FileManagerDlg.h">
       <Filter>文件管理</Filter>
     </ClInclude>
+    <ClInclude Include="FileTransferModeDlg.h">
+      <Filter>文件管理</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -206,6 +209,9 @@
     <ClCompile Include="FileManagerDlg.cpp">
       <Filter>文件管理</Filter>
     </ClCompile>
+    <ClCompile Include="FileTransferModeDlg.cpp">
+      <Filter>文件管理</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CrabRemoteServer.rc">
@@ -214,6 +220,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\CrabRemoteServer.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="Cursor\MultiDrag.cur">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="Cursor\SingleDrag.cur">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="icon\cursor1.cur">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

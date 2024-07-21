@@ -29,12 +29,14 @@
 #define IDD_CMD_MANAGER_DIALOG          163
 #define IDD_WINDOW_MANAGER_DIALOG       165
 #define IDR_CLIENT_WINDOW_MENU          167
-#define IDD_DIALOG1                     170
 #define IDD_REMOTE_CONTROL_DIALOG       170
 #define IDD_FILE_MANAGER_DIALOG         172
 #define IDB_FILE_MANAGER_BITMAP         174
 #define IDR_SERVER_FILE_TOOLBAR         175
 #define IDR_CLIENT_FILE_TOOLBAR         177
+#define IDC_MULTI_CURSOR                180
+#define IDC_SINGLE_CURSOR               181
+#define IDD_FILE_TRANSFER_MODE_DIALOG   182
 #define CRAB_SERVER_INFORMATION_LIST    1000
 #define CRAB_CLIENT_INFORMATION_LIST    1001
 #define IDC_SET_LISTEN_PORT             1003
@@ -78,6 +80,12 @@
 #define IDC_CLIENT_FILE_COMBO           1048
 #define IDC_CLIENT_POSITION_STATIC      1049
 #define IDC_SERVER_POSITION_STATIC      1050
+#define IDC_COVER_BUTTON                1050
+#define IDC_ALL_COVER_BUTTON            1051
+#define IDC_JMP_BUTTON                  1052
+#define IDC_ALL_JMP_BUTTON              1053
+#define IDC_CANCEL_BUTTON               1054
+#define IDC_TIPS_STATIC                 1055
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
 #define ID_MENU_ADD_INFORMATION         32780
@@ -132,9 +140,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        179
+#define _APS_NEXT_RESOURCE_VALUE        184
 #define _APS_NEXT_COMMAND_VALUE         32853
-#define _APS_NEXT_CONTROL_VALUE         1050
+#define _APS_NEXT_CONTROL_VALUE         1056
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
