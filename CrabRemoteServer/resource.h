@@ -38,6 +38,8 @@
 #define IDC_SINGLE_CURSOR               181
 #define IDD_FILE_TRANSFER_MODE_DIALOG   182
 #define IDD_FILE_NEW_FOLDER_DIALOG      184
+#define IDR_SERVER_FILE_VIEW_MENU       186
+#define IDR_SERVER_FILE_OPERATION_MENU  187
 #define CRAB_SERVER_INFORMATION_LIST    1000
 #define CRAB_CLIENT_INFORMATION_LIST    1001
 #define IDC_SET_LISTEN_PORT             1003
@@ -87,7 +89,6 @@
 #define IDC_ALL_JMP_BUTTON              1053
 #define IDC_CANCEL_BUTTON               1054
 #define IDC_TIPS_STATIC                 1055
-#define IDC_EDIT1                       1056
 #define IDC_NEW_FOLDER_EDIT             1056
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
@@ -138,13 +139,18 @@
 #define IDT_CLIENT_NEW_FOLDER           32850
 #define IDT_CLIENT_FILE_FINDER          32851
 #define IDT_CLIENT_FILE_STOP            32852
+#define ID_SERVER_FILE_VIEW_BIG         32857
+#define ID_SERVER_FILE_VIEW_SMALL       32858
+#define ID_SERVER_FILE_VIEW_LIST        32859
+#define ID_SERVER_FILE_VIEW_DETAIL      32860
+#define ID_SERVER_FILE_RUN              32862
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        186
-#define _APS_NEXT_COMMAND_VALUE         32853
+#define _APS_NEXT_RESOURCE_VALUE        188
+#define _APS_NEXT_COMMAND_VALUE         32863
 #define _APS_NEXT_CONTROL_VALUE         1057
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

@@ -115,4 +115,8 @@ public:
 	afx_msg void OnClientFilePrevious();
 	afx_msg void OnClientFileStop();
 
+	afx_msg void OnLvnEndlabeleditServerFileList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnLvnEndlabeleditClientFileList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnNMRClickServerFileList(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnServerFileRun();
 };

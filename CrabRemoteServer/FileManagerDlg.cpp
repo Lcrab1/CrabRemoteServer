@@ -594,6 +594,14 @@ BEGIN_MESSAGE_MAP(CFileManagerDlg, CDialogEx)
 	ON_COMMAND(IDT_SERVER_NEW_FOLDER, &CFileManagerDlg::OnServerNewFolder)
 	ON_COMMAND(IDT_SERVER_FILE_STOP, &CFileManagerDlg::OnServerFileStop)
 	
+	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_SERVER_FILE_LIST, &CFileManagerDlg::OnLvnEndlabeleditServerFileList)
+	ON_NOTIFY(LVN_ENDLABELEDIT, IDC_CLIENT_FILE_LIST, &CFileManagerDlg::OnLvnEndlabeleditClientFileList)
+	ON_COMMAND(ID_SERVER_FILE_VIEW_BIG, &CFileManagerDlg::OnServerFileViewBig)
+	ON_COMMAND(ID_SERVER_FILE_VIEW_SMALL, &CFileManagerDlg::OnServerFileViewSmall)
+	ON_COMMAND(ID_SERVER_FILE_VIEW_LIST, &CFileManagerDlg::OnServerFileViewList)
+	ON_COMMAND(ID_SERVER_FILE_VIEW_DETAIL, &CFileManagerDlg::OnServerFileViewDetail)
+	ON_NOTIFY(NM_RCLICK, IDC_SERVER_FILE_LIST, &CFileManagerDlg::OnNMRClickServerFileList)
+	ON_COMMAND(ID_SERVER_FILE_RUN, &CFileManagerDlg::OnServerFileRun)
 END_MESSAGE_MAP()
 
 
@@ -635,7 +643,7 @@ BOOL CFileManagerDlg::OnInitDialog()
 		IDB_FILE_MANAGER_BITMAP    //没有用
 	);
 	m_ServerFileToolBar.AddDropDownButton(this, IDT_SERVER_FILE_VIEW,
-		IDT_SERVER_FILE_VIEW);
+		IDR_SERVER_FILE_VIEW_MENU);
 
 	m_ServerFileToolBar.SetButtonText(0, _T("返回"));     //在位图的下面添加文件
 	m_ServerFileToolBar.SetButtonText(1, _T("查看"));
@@ -1264,18 +1272,22 @@ void CFileManagerDlg::OnServerFileStop()
 
 void CFileManagerDlg::OnServerFileViewBig()
 {
+	m_ServerFileList.ModifyStyle(LVS_TYPEMASK, LVS_ICON);
 }
 
 void CFileManagerDlg::OnServerFileViewSmall()
 {
+	m_ServerFileList.ModifyStyle(LVS_TYPEMASK, LVS_SMALLICON);
 }
 
 void CFileManagerDlg::OnServerFileViewList()
 {
+	m_ServerFileList.ModifyStyle(LVS_TYPEMASK, LVS_LIST);
 }
 
 void CFileManagerDlg::OnServerFileViewDetail()
 {
+	m_ServerFileList.ModifyStyle(LVS_TYPEMASK, LVS_REPORT);
 }
 
 void CFileManagerDlg::OnClientFilePrevious()
@@ -1308,4 +1320,74 @@ VOID CFileManagerDlg::DropFileOnList()
 	{
 		return;
 	}
+}
+
+void CFileManagerDlg::OnLvnEndlabeleditServerFileList(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	CString NewFileName, ExistingFileFullPath, NewFileFullPath;
+	m_ServerFileList.GetEditControl()->GetWindowText(NewFileName);
+	ExistingFileFullPath = m_ServerFullPath + m_ServerFileList.GetItemText(pDispInfo->item.iItem, 0);
+	NewFileFullPath = m_ServerFullPath + NewFileName;
+	*pResult = ::MoveFile(ExistingFileFullPath.GetBuffer(0), NewFileFullPath.GetBuffer(0));
+}
+
+
+void CFileManagerDlg::OnLvnEndlabeleditClientFileList(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	NMLVDISPINFO* pDispInfo = reinterpret_cast<NMLVDISPINFO*>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	CString NewFileName, ExistingFileFullPath, NewFileFullPath;
+	m_ClientFileList.GetEditControl()->GetWindowText(NewFileName);
+
+	ExistingFileFullPath = m_ClientFullPath + m_ClientFileList.GetItemText(pDispInfo->item.iItem, 0);
+	NewFileFullPath = m_ClientFullPath + NewFileName;
+
+	if (ExistingFileFullPath != NewFileFullPath)
+	{
+		UINT   BufferLength = ExistingFileFullPath.GetLength() + NewFileFullPath.GetLength() + 3;
+		LPBYTE BufferData = (LPBYTE)LocalAlloc(LPTR, BufferLength);
+		BufferData[0] = CLIENT_FILE_MANAGER_FILE_RENAME_REQUIRE;                                                                   //向被控端发送消息
+		memcpy(BufferData + 1, ExistingFileFullPath.GetBuffer(0), ExistingFileFullPath.GetLength() + 1);
+		memcpy(BufferData + 2 + ExistingFileFullPath.GetLength(),
+			NewFileFullPath.GetBuffer(0), NewFileFullPath.GetLength() + 1);
+		m_IocpServer->OnPrepareSending(m_ContextObject, BufferData, BufferLength);
+		LocalFree(BufferData);
+		GetClientFileList(".");
+	}
+	*pResult = 0;
+}
+
+
+void CFileManagerDlg::OnNMRClickServerFileList(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	CMenu	Menu;
+	Menu.LoadMenu(IDR_SERVER_FILE_OPERATION_MENU);
+	CMenu* SubMenu = Menu.GetSubMenu(0);
+	CPoint	Point;
+	GetCursorPos(&Point);
+	SubMenu->DeleteMenu(2, MF_BYPOSITION);
+	if (m_ServerFileList.GetSelectedCount() == 0)
+	{
+		int	iCount = SubMenu->GetMenuItemCount();
+		for (int i = 0; i < iCount; i++)
+		{
+			SubMenu->EnableMenuItem(i, MF_BYPOSITION | MF_GRAYED);
+		}
+	}
+
+	SubMenu->TrackPopupMenu(TPM_LEFTALIGN, Point.x, Point.y, this);
+	*pResult = 0;
+}
+
+
+void CFileManagerDlg::OnServerFileRun()
+{
+	// TODO: 在此添加命令处理程序代码
+	CString	FileFullPath;
+	FileFullPath = m_ServerFullPath + m_ServerFileList.GetItemText(m_ServerFileList.GetSelectionMark(), 0);
+	ShellExecute(NULL, _T("open"), FileFullPath, NULL, NULL, SW_SHOW);   //CreateProcess 
 }
