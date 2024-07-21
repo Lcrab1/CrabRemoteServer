@@ -587,6 +587,13 @@ BEGIN_MESSAGE_MAP(CFileManagerDlg, CDialogEx)
 	ON_WM_LBUTTONUP()
 	ON_WM_MOUSEMOVE()
 	ON_NOTIFY(LVN_BEGINDRAG, IDC_SERVER_FILE_LIST, &CFileManagerDlg::OnLvnBegindragServerFileList)
+	ON_COMMAND(IDT_CLIENT_FILE_PREVIOUS, &CFileManagerDlg::OnClientFilePrevious)
+	ON_COMMAND(IDT_CLIENT_FILE_STOP, &CFileManagerDlg::OnClientFileStop)
+	ON_COMMAND(IDT_SERVER_FILE_PREVIOUS, &CFileManagerDlg::OnServerFilePrevious)
+	ON_COMMAND(IDT_SERVER_FILE_DELETE, &CFileManagerDlg::OnServerFileDelete)
+	ON_COMMAND(IDT_SERVER_NEW_FOLDER, &CFileManagerDlg::OnServerNewFolder)
+	ON_COMMAND(IDT_SERVER_FILE_STOP, &CFileManagerDlg::OnServerFileStop)
+	
 END_MESSAGE_MAP()
 
 
@@ -1169,6 +1176,115 @@ VOID CFileManagerDlg::EndCopyServerFileToClient()
 		SendServerFileInformationToClient();   //正常的传输完毕 进行下一个文件的传输
 	}
 	return;
+}
+
+void CFileManagerDlg::OnServerFilePrevious()
+{
+	FixedServerFileList("..");
+}
+
+void CFileManagerDlg::OnServerFileDelete()
+{
+	CString v1;
+	if (m_ServerFileList.GetSelectedCount() > 1)
+		v1.Format(_T("确定要将这 %d 项删除吗?"), m_ServerFileList.GetSelectedCount());
+	else
+	{
+
+		int Item = m_ServerFileList.GetSelectionMark();
+
+		if (Item == -1)
+		{
+			return;
+		}
+		CString FileName = m_ServerFileList.GetItemText(m_ServerFileList.GetSelectionMark(), 0);
+
+		//删除的是不是目录
+		if (m_ServerFileList.GetItemData(Item) == 1)
+		{
+			v1.Format(_T("确实要删除文件夹“%s”并将所有内容删除吗?"), FileName);
+		}
+		else
+		{
+			v1.Format(_T("确实要把“%s”删除吗?"), FileName);
+		}
+	}
+	if (::MessageBox(m_hWnd, v1, _T("确认删除"), MB_YESNO | MB_ICONQUESTION) == IDNO)
+	{
+		return;
+	}
+	//不能让用户乱点
+	EnableControl(FALSE);
+
+	POSITION Position = m_ServerFileList.GetFirstSelectedItemPosition();
+	while (Position)
+	{
+		int Item = m_ServerFileList.GetNextSelectedItem(Position);
+		CString	FileFullPath = m_ServerFullPath + m_ServerFileList.GetItemText(Item, 0);
+		//如果是目录
+		if (m_ServerFileList.GetItemData(Item))
+		{
+			FileFullPath += '\\';
+			DeleteDirectory(FileFullPath);
+		}
+		else
+		{
+			DeleteFile(FileFullPath);
+		}
+	}
+	// 禁用文件管理窗口
+	EnableControl(TRUE);
+	//刷新数据
+	FixedServerFileList(".");
+}
+
+void CFileManagerDlg::OnServerNewFolder()
+{
+	if (m_ServerFullPath == "")
+	{
+		return;
+	}
+
+	CFileNewFolder  Dialog(this);
+	if (Dialog.DoModal() == IDOK && Dialog.m_NewFolderEdit.GetLength())
+	{
+		// 创建多层目录
+
+
+		CString  v1;
+		v1 = m_ServerFullPath + Dialog.m_NewFolderEdit + _T("\\");
+		CreateDirectory(v1.GetBuffer());
+		FixedServerFileList(".");
+	}
+}
+
+void CFileManagerDlg::OnServerFileStop()
+{
+}
+
+void CFileManagerDlg::OnServerFileViewBig()
+{
+}
+
+void CFileManagerDlg::OnServerFileViewSmall()
+{
+}
+
+void CFileManagerDlg::OnServerFileViewList()
+{
+}
+
+void CFileManagerDlg::OnServerFileViewDetail()
+{
+}
+
+void CFileManagerDlg::OnClientFilePrevious()
+{
+	GetClientFileList("..");
+}
+
+void CFileManagerDlg::OnClientFileStop()
+{
 }
 
 VOID CFileManagerDlg::DropFileOnList()

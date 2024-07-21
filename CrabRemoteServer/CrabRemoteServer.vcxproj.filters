@@ -147,6 +147,12 @@
     <ClInclude Include="FileTransferModeDlg.h">
       <Filter>文件管理</Filter>
     </ClInclude>
+    <ClInclude Include="FileHelper.h">
+      <Filter>文件管理</Filter>
+    </ClInclude>
+    <ClInclude Include="FileNewFolder.h">
+      <Filter>文件管理</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -210,6 +216,12 @@
       <Filter>文件管理</Filter>
     </ClCompile>
     <ClCompile Include="FileTransferModeDlg.cpp">
+      <Filter>文件管理</Filter>
+    </ClCompile>
+    <ClCompile Include="FileHelper.cpp">
+      <Filter>文件管理</Filter>
+    </ClCompile>
+    <ClCompile Include="FileNewFolder.cpp">
       <Filter>文件管理</Filter>
     </ClCompile>
   </ItemGroup>

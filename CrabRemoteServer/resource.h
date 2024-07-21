@@ -37,6 +37,7 @@
 #define IDC_MULTI_CURSOR                180
 #define IDC_SINGLE_CURSOR               181
 #define IDD_FILE_TRANSFER_MODE_DIALOG   182
+#define IDD_FILE_NEW_FOLDER_DIALOG      184
 #define CRAB_SERVER_INFORMATION_LIST    1000
 #define CRAB_CLIENT_INFORMATION_LIST    1001
 #define IDC_SET_LISTEN_PORT             1003
@@ -86,6 +87,8 @@
 #define IDC_ALL_JMP_BUTTON              1053
 #define IDC_CANCEL_BUTTON               1054
 #define IDC_TIPS_STATIC                 1055
+#define IDC_EDIT1                       1056
+#define IDC_NEW_FOLDER_EDIT             1056
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
 #define ID_MENU_ADD_INFORMATION         32780
@@ -140,9 +143,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        184
+#define _APS_NEXT_RESOURCE_VALUE        186
 #define _APS_NEXT_COMMAND_VALUE         32853
-#define _APS_NEXT_CONTROL_VALUE         1056
+#define _APS_NEXT_CONTROL_VALUE         1057
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

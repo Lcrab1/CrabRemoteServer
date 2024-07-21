@@ -53,8 +53,31 @@ CIocpServer::~CIocpServer()
 	WaitForSingleObject(m_ListenThreadHandle, INFINITE);
 	CloseHandle(m_ListenThreadHandle);
 	m_ListenThreadHandle = INVALID_HANDLE_VALUE;
-
+	m_ThreadsPoolMin = 0;
+	m_ThreadsPoolMax = 0;
+	m_WorkThreadsCount = 0;
+	m_Working = FALSE;
 	//监听套接字的关闭
+
+	if (m_CompletionPortHandle != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(m_CompletionPortHandle);
+		m_CompletionPortHandle = INVALID_HANDLE_VALUE;
+	}
+
+	WaitForMultipleObjects(WORK_THREAD_MAX, m_WorkThreadHandle, TRUE, INFINITE);
+	int i = 0;
+	for (i = 0; i < WORK_THREAD_MAX; i++)
+	{
+		CloseHandle(m_WorkThreadHandle[i]);
+		m_WorkThreadHandle[i] = INVALID_HANDLE_VALUE;
+	}
+	DeleteCriticalSection(&m_CriticalSection);
+	if (m_CompletionPortHandle != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(m_CompletionPortHandle);
+		m_CompletionPortHandle = INVALID_HANDLE_VALUE;
+	}
 	if (m_listenSocket != INVALID_SOCKET)
 	{
 		closesocket(m_listenSocket);
@@ -75,29 +98,6 @@ CIocpServer::~CIocpServer()
 		m_KillEventHandle = NULL;
 	}
 
-	m_ThreadsPoolMin = 0;
-	m_ThreadsPoolMax = 0;
-	m_WorkThreadsCount = 0;
-
-	m_Working = FALSE;
-
-	if (m_CompletionPortHandle != INVALID_HANDLE_VALUE)
-	{
-		CloseHandle(m_CompletionPortHandle);
-		m_CompletionPortHandle = INVALID_HANDLE_VALUE;
-	}
-
-	WaitForMultipleObjects(WORK_THREAD_MAX, m_WorkThreadHandle, TRUE, INFINITE);
-	int i = 0;
-	for (i = 0; i < WORK_THREAD_MAX; i++)
-	{
-		CloseHandle(m_WorkThreadHandle[i]);
-		m_WorkThreadHandle[i] = INVALID_HANDLE_VALUE;
-	}
-	
-
-
-	DeleteCriticalSection(&m_CriticalSection);
 	WSACleanup();	//释放Windows Sockets库所占用的资源，并终止对网络套接字的使用
 
 	//资源回收

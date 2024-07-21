@@ -3,6 +3,8 @@
 #include"TrueColorToolBar.h"
 #include"FileTransferModeDlg.h"
 #include"Common.h"
+#include"FileHelper.h"
+#include"FileNewFolder.h"
 // CFileManagerDlg 对话框
 #define MAKEINT64(a, b) ((unsigned __int64)(((DWORD)(a)) | ((unsigned __int64)((DWORD)(b))) << 32))
 #define MAX_SEND_BUFFER 0x2000
@@ -101,5 +103,16 @@ public:
 	VOID SendTransferMode();
 	VOID EndCopyServerFileToClient();
 
+	afx_msg void OnServerFilePrevious();
+	afx_msg void OnServerFileDelete();
+	afx_msg void OnServerNewFolder();
+	afx_msg void OnServerFileStop();
+	afx_msg void OnServerFileViewBig();
+	afx_msg void OnServerFileViewSmall();
+	afx_msg void OnServerFileViewList();
+	afx_msg void OnServerFileViewDetail();
+
+	afx_msg void OnClientFilePrevious();
+	afx_msg void OnClientFileStop();
 
 };
