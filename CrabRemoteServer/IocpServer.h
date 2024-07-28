@@ -80,6 +80,7 @@ typedef struct _CONTEXT_OBJECT_
 	HANDLE			  RemoteDlg;
 	HANDLE			  FileDlg;
 	HANDLE			  RegisterDlg;
+	HANDLE		      ServiceDlg;
 }CONTEXT_OBJECT,*PCONTEXT_OBJECT;
 
 

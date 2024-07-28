@@ -146,6 +146,7 @@ BEGIN_MESSAGE_MAP(CCrabRemoteServerDlg, CDialogEx)
 	ON_MESSAGE(UM_OPEN_REMOTE_CONTROLLER_DIALOG, OnOpenRemoteControllerDialog)
 	ON_MESSAGE(UM_OPEN_FILE_MANAGER_DIALOG, OnOpenFileManagerDialog)
 	ON_MESSAGE(UM_OPEN_REGISTER_MANAGER_DIALOG, OnOpenRegisterManagerDialog)
+	ON_MESSAGE(UM_OPEN_SERVICE_MANAGER_DIALOG, OnOpenServiceManagerDialog)
 END_MESSAGE_MAP()
 
 
@@ -474,7 +475,8 @@ VOID CCrabRemoteServerDlg::OnButtonVideoManager()
 
 VOID CCrabRemoteServerDlg::OnButtonServiceManager()
 {
-	//MessageBox("OnButtonServiceManager");
+	BYTE	IsToken = CLIENT_SERVICE_MANAGER_REQUIRE;
+	SendingSelectedCommand(&IsToken, sizeof(BYTE));
 	return VOID();
 }
 
@@ -496,8 +498,9 @@ VOID CCrabRemoteServerDlg::OnButtonServerManager()
 
 VOID CCrabRemoteServerDlg::OnButtonClientManager()
 {
-	//MessageBox("OnButtonClienManager");
-	return VOID();
+	CCreateClientDlg Object;
+	Object.DoModal();
+	return;
 }
 
 VOID CCrabRemoteServerDlg::OnButtonServerAbout()
@@ -695,6 +698,12 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		CRegisterManagerDlg* Dialog = (CRegisterManagerDlg*)ContextObject->RegisterDlg;
 		Dialog->OnReceiveComplete();
 	}
+	if (ContextObject->DlgIdentity == SERVICE_MANAGER_DIALOG)
+	{
+		CServiceManagerDlg* Dialog = (CServiceManagerDlg*)ContextObject->ServiceDlg;
+		Dialog->OnReceiveComplete();
+		return;
+	}
 
 	switch (ContextObject->m_ReceivedBufferDataDecompressed.GetArray(0)[0])   //[13][]
 	{
@@ -798,22 +807,24 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 	case CLIENT_REMOTE_CONTROLLER_REPLY:
 	{
 
-		//接到客户端发过来的位图信息
 		__ServerProjectDlg->PostMessage(UM_OPEN_REMOTE_CONTROLLER_DIALOG, 0, (LPARAM)ContextObject);
 		break;
 	}
 	case CLIENT_FILE_MANAGER_REPLY:
 	{
 
-		//接到客户端发过来的位图信息
 		__ServerProjectDlg->PostMessage(UM_OPEN_FILE_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
 		break;
 	}
 	case CLIENT_REGISTER_MANAGER_REPLY:
 	{
 
-		//接到客户端发过来的位图信息
 		__ServerProjectDlg->PostMessage(UM_OPEN_REGISTER_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
+		break;
+	}
+	case CLIENT_SERVICE_MANAGER_REPLY:
+	{
+		__ServerProjectDlg->PostMessage(UM_OPEN_SERVICE_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
 		break;
 	}
 	}
@@ -1177,6 +1188,24 @@ LRESULT CCrabRemoteServerDlg::OnOpenRegisterManagerDialog(WPARAM ParameterData1,
 	{
 		ContextObject->DlgIdentity = REGISTER_MANAGER_DIALOG;
 		ContextObject->RegisterDlg = Dialog;
+	}
+
+	return 0;
+}
+LRESULT CCrabRemoteServerDlg::OnOpenServiceManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2)
+{
+	//创建一个远程消息对话框
+	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)ParameterData2;
+	//非阻塞对话框
+	CServiceManagerDlg* Dialog = new CServiceManagerDlg(this, m_IocpServer, ContextObject);
+	// 设置父窗口为卓面
+	Dialog->Create(IDD_SERVICE_MANAGER_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
+	Dialog->ShowWindow(SW_SHOW);
+
+	if (ContextObject != NULL)
+	{
+		ContextObject->DlgIdentity = SERVICE_MANAGER_DIALOG;
+		ContextObject->ServiceDlg = Dialog;
 	}
 
 	return 0;

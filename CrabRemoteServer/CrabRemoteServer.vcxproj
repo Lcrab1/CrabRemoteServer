@@ -187,6 +187,7 @@
   <ItemGroup>
     <ClInclude Include="CArray.h" />
     <ClInclude Include="CmdManagerDlg.h" />
+    <ClInclude Include="CreateClientDlg.h" />
     <ClInclude Include="CreateProcessDlg.h" />
     <ClInclude Include="CriticalSection.h" />
     <ClInclude Include="ConfigFile.h" />
@@ -208,6 +209,7 @@
     <ClInclude Include="RegisterManagerDlg.h" />
     <ClInclude Include="RemoteController.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ServiceManagerDlg.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TrueColorToolBar.h" />
     <ClInclude Include="ValueEditor.h" />
@@ -219,6 +221,7 @@
     <ClCompile Include="CArray.cpp" />
     <ClCompile Include="CmdManagerDlg.cpp" />
     <ClCompile Include="Common.h" />
+    <ClCompile Include="CreateClientDlg.cpp" />
     <ClCompile Include="CreateProcessDlg.cpp" />
     <ClCompile Include="CriticalSection.cpp" />
     <ClCompile Include="ConfigFile.cpp" />
@@ -242,6 +245,7 @@
     <ClCompile Include="ProcessVMMapDlg.cpp" />
     <ClCompile Include="RegisterManagerDlg.cpp" />
     <ClCompile Include="RemoteController.cpp" />
+    <ClCompile Include="ServiceManagerDlg.cpp" />
     <ClCompile Include="TrueColorToolBar.cpp" />
     <ClCompile Include="ValueEditor.cpp" />
     <ClCompile Include="WindowManager.cpp" />

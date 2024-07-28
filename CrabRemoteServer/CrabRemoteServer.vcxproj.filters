@@ -70,6 +70,12 @@
     <Filter Include="注册表管理">
       <UniqueIdentifier>{03692e53-11c9-4323-b7f6-b6f09b948d41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="生成客户端">
+      <UniqueIdentifier>{f60b01fb-521f-49c7-83d9-364c842ed174}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="服务管理">
+      <UniqueIdentifier>{cdfeabd3-c03c-46b8-b335-213983b20edb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -159,6 +165,12 @@
     <ClInclude Include="RegisterManagerDlg.h">
       <Filter>注册表管理</Filter>
     </ClInclude>
+    <ClInclude Include="CreateClientDlg.h">
+      <Filter>生成客户端</Filter>
+    </ClInclude>
+    <ClInclude Include="ServiceManagerDlg.h">
+      <Filter>服务管理</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -232,6 +244,12 @@
     </ClCompile>
     <ClCompile Include="RegisterManagerDlg.cpp">
       <Filter>注册表管理</Filter>
+    </ClCompile>
+    <ClCompile Include="CreateClientDlg.cpp">
+      <Filter>生成客户端</Filter>
+    </ClCompile>
+    <ClCompile Include="ServiceManagerDlg.cpp">
+      <Filter>服务管理</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

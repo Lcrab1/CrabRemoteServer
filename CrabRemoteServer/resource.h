@@ -45,6 +45,9 @@
 #define IDI_FATHER_ICON                 191
 #define IDI_FILE_ICON                   192
 #define IDI_STRING_ICON                 193
+#define IDD_CREATE_CLIENT_DIALOG        194
+#define IDD_SERVICE_MANAGER_DIALOG      196
+#define IDR_SERVICE_MANAGER_MAIN_MENU   198
 #define CRAB_SERVER_INFORMATION_LIST    1000
 #define CRAB_CLIENT_INFORMATION_LIST    1001
 #define IDC_SET_LISTEN_PORT             1003
@@ -97,6 +100,10 @@
 #define IDC_NEW_FOLDER_EDIT             1056
 #define IDC_REGISTER_SHOW_TREE          1057
 #define IDC_REGISTER_SHOW_LIST          1058
+#define IDC_IP_EDIT                     1059
+#define IDC_PORT_EDIT                   1060
+#define IDC_OK_BUTTON                   1061
+#define IDC_SERVICE_INFO_LIST           1062
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
 #define ID_MENU_ADD_INFORMATION         32780
@@ -151,14 +158,19 @@
 #define ID_SERVER_FILE_VIEW_LIST        32859
 #define ID_SERVER_FILE_VIEW_DETAIL      32860
 #define ID_SERVER_FILE_RUN              32862
+#define ID_REFRESH_SERVICE              32869
+#define ID_START_SERVICE                32870
+#define ID_STOP_SERVICE                 32871
+#define ID_AUTO_START_SERVICE           32872
+#define ID_MANUAL_START_SERVICE         32873
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        194
-#define _APS_NEXT_COMMAND_VALUE         32863
-#define _APS_NEXT_CONTROL_VALUE         1059
+#define _APS_NEXT_RESOURCE_VALUE        199
+#define _APS_NEXT_COMMAND_VALUE         32874
+#define _APS_NEXT_CONTROL_VALUE         1063
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
