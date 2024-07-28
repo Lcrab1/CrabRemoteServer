@@ -67,6 +67,9 @@
     <Filter Include="文件管理">
       <UniqueIdentifier>{e4d77917-74d9-4742-a009-35ad00869644}</UniqueIdentifier>
     </Filter>
+    <Filter Include="注册表管理">
+      <UniqueIdentifier>{03692e53-11c9-4323-b7f6-b6f09b948d41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -153,6 +156,9 @@
     <ClInclude Include="FileNewFolder.h">
       <Filter>文件管理</Filter>
     </ClInclude>
+    <ClInclude Include="RegisterManagerDlg.h">
+      <Filter>注册表管理</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -224,6 +230,9 @@
     <ClCompile Include="FileNewFolder.cpp">
       <Filter>文件管理</Filter>
     </ClCompile>
+    <ClCompile Include="RegisterManagerDlg.cpp">
+      <Filter>注册表管理</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CrabRemoteServer.rc">
@@ -270,6 +279,18 @@
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="bitmap\bmp00001.bmp">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="icon\Dword.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="icon\Father.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="icon\File.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="icon\String.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>

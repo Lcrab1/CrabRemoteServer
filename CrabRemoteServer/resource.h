@@ -40,6 +40,11 @@
 #define IDD_FILE_NEW_FOLDER_DIALOG      184
 #define IDR_SERVER_FILE_VIEW_MENU       186
 #define IDR_SERVER_FILE_OPERATION_MENU  187
+#define IDD_REGISTER_MANAGER_DIALOG     188
+#define IDI_DWORD_ICON                  190
+#define IDI_FATHER_ICON                 191
+#define IDI_FILE_ICON                   192
+#define IDI_STRING_ICON                 193
 #define CRAB_SERVER_INFORMATION_LIST    1000
 #define CRAB_CLIENT_INFORMATION_LIST    1001
 #define IDC_SET_LISTEN_PORT             1003
@@ -90,6 +95,8 @@
 #define IDC_CANCEL_BUTTON               1054
 #define IDC_TIPS_STATIC                 1055
 #define IDC_NEW_FOLDER_EDIT             1056
+#define IDC_REGISTER_SHOW_TREE          1057
+#define IDC_REGISTER_SHOW_LIST          1058
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
 #define ID_MENU_ADD_INFORMATION         32780
@@ -149,9 +156,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        188
+#define _APS_NEXT_RESOURCE_VALUE        194
 #define _APS_NEXT_COMMAND_VALUE         32863
-#define _APS_NEXT_CONTROL_VALUE         1057
+#define _APS_NEXT_CONTROL_VALUE         1059
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

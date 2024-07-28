@@ -205,6 +205,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcessManagerDlg.h" />
     <ClInclude Include="ProcessVMMapDlg.h" />
+    <ClInclude Include="RegisterManagerDlg.h" />
     <ClInclude Include="RemoteController.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -239,6 +240,7 @@
     </ClCompile>
     <ClCompile Include="ProcessManagerDlg.cpp" />
     <ClCompile Include="ProcessVMMapDlg.cpp" />
+    <ClCompile Include="RegisterManagerDlg.cpp" />
     <ClCompile Include="RemoteController.cpp" />
     <ClCompile Include="TrueColorToolBar.cpp" />
     <ClCompile Include="ValueEditor.cpp" />
@@ -261,7 +263,11 @@
     <Image Include="BitMap\FileManager.bmp" />
     <Image Include="BitMap\ServerDialogMain.bmp" />
     <Image Include="bitmap\toolbar2.bmp" />
+    <Image Include="icon\Dword.ico" />
+    <Image Include="icon\Father.ico" />
     <Image Include="icon\favicon.ico" />
+    <Image Include="icon\File.ico" />
+    <Image Include="icon\String.ico" />
     <Image Include="icon\接口配置.png" />
     <Image Include="res\CrabRemoteServer.ico" />
     <Image Include="res\icon1.ico" />
