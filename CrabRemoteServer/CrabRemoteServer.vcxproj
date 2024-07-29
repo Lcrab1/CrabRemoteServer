@@ -185,6 +185,8 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="AudioManagerDlg.h" />
     <ClInclude Include="CArray.h" />
     <ClInclude Include="CmdManagerDlg.h" />
     <ClInclude Include="CreateClientDlg.h" />
@@ -218,6 +220,8 @@
     <ClInclude Include="zlib.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="AudioManagerDlg.cpp" />
     <ClCompile Include="CArray.cpp" />
     <ClCompile Include="CmdManagerDlg.cpp" />
     <ClCompile Include="Common.h" />

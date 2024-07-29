@@ -48,6 +48,7 @@
 #define IDD_CREATE_CLIENT_DIALOG        194
 #define IDD_SERVICE_MANAGER_DIALOG      196
 #define IDR_SERVICE_MANAGER_MAIN_MENU   198
+#define IDD_AUDIO_MANAGER_DIALOG        199
 #define CRAB_SERVER_INFORMATION_LIST    1000
 #define CRAB_CLIENT_INFORMATION_LIST    1001
 #define IDC_SET_LISTEN_PORT             1003
@@ -104,6 +105,7 @@
 #define IDC_PORT_EDIT                   1060
 #define IDC_OK_BUTTON                   1061
 #define IDC_SERVICE_INFO_LIST           1062
+#define IDC_AUDIO_MANAGER_CHECK         1063
 #define ID_MENU_EXIT                    32775
 #define ID_MENU_SET_LOCAL               32777
 #define ID_MENU_ADD_INFORMATION         32780
@@ -168,9 +170,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        199
+#define _APS_NEXT_RESOURCE_VALUE        201
 #define _APS_NEXT_COMMAND_VALUE         32874
-#define _APS_NEXT_CONTROL_VALUE         1063
+#define _APS_NEXT_CONTROL_VALUE         1064
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

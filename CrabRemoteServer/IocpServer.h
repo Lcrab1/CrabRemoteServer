@@ -81,6 +81,7 @@ typedef struct _CONTEXT_OBJECT_
 	HANDLE			  FileDlg;
 	HANDLE			  RegisterDlg;
 	HANDLE		      ServiceDlg;
+	HANDLE			  AudioDlg;
 }CONTEXT_OBJECT,*PCONTEXT_OBJECT;
 
 

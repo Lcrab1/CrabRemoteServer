@@ -147,6 +147,7 @@ BEGIN_MESSAGE_MAP(CCrabRemoteServerDlg, CDialogEx)
 	ON_MESSAGE(UM_OPEN_FILE_MANAGER_DIALOG, OnOpenFileManagerDialog)
 	ON_MESSAGE(UM_OPEN_REGISTER_MANAGER_DIALOG, OnOpenRegisterManagerDialog)
 	ON_MESSAGE(UM_OPEN_SERVICE_MANAGER_DIALOG, OnOpenServiceManagerDialog)
+	ON_MESSAGE(UM_OPEN_AUDIO_MANAGER_DIALOG, OnOpenAudioManagerDialog)
 END_MESSAGE_MAP()
 
 
@@ -457,7 +458,8 @@ VOID CCrabRemoteServerDlg::OnButtonFileManager()
 
 VOID CCrabRemoteServerDlg::OnButtonAudioManager()
 {
-
+	BYTE	IsToken = CLIENT_AUDIO_MANAGER_REQUIRE;
+	SendingSelectedCommand(&IsToken, sizeof(BYTE));
 	return VOID();
 }
 
@@ -682,21 +684,25 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 	{
 			CCmdManagerDlg* Dialog = (CCmdManagerDlg*)ContextObject->ProcessDlg;
 			Dialog->OnReceiveComplete();
+			return;
 	}
 	if (ContextObject->DlgIdentity == REMOTE_CONTROL_DIALOG)
 	{
 		CRemoteController* Dialog = (CRemoteController*)ContextObject->RemoteDlg;
 		Dialog->OnReceiveComplete();
+		return;
 	}
 	if (ContextObject->DlgIdentity == FILE_MANAGER_DIALOG)
 	{
 		CFileManagerDlg* Dialog = (CFileManagerDlg*)ContextObject->FileDlg;
 		Dialog->OnReceiveComplete();
+		return;
 	}
 	if (ContextObject->DlgIdentity == REGISTER_MANAGER_DIALOG)
 	{
 		CRegisterManagerDlg* Dialog = (CRegisterManagerDlg*)ContextObject->RegisterDlg;
 		Dialog->OnReceiveComplete();
+		return;
 	}
 	if (ContextObject->DlgIdentity == SERVICE_MANAGER_DIALOG)
 	{
@@ -704,7 +710,12 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 		Dialog->OnReceiveComplete();
 		return;
 	}
-
+	if (ContextObject->DlgIdentity == AUDIO_MANAGER_DIALOG)
+	{
+		CAudioManagerDlg* Dialog = (CAudioManagerDlg*)ContextObject->AudioDlg;
+		Dialog->OnReceiveComplete();
+		return;
+	}
 	switch (ContextObject->m_ReceivedBufferDataDecompressed.GetArray(0)[0])   //[13][]
 	{
 	case CLIENT_LOGIN:   //用户登录请求
@@ -825,6 +836,13 @@ VOID CCrabRemoteServerDlg::WndHandleIo(CONTEXT_OBJECT* ContextObject)
 	case CLIENT_SERVICE_MANAGER_REPLY:
 	{
 		__ServerProjectDlg->PostMessage(UM_OPEN_SERVICE_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
+		break;
+	}
+	case CLIENT_AUDIO_MANAGER_REPLY:
+	{
+
+		//接到客户端发过来的位图信息
+		__ServerProjectDlg->PostMessage(UM_OPEN_AUDIO_MANAGER_DIALOG, 0, (LPARAM)ContextObject);
 		break;
 	}
 	}
@@ -1209,4 +1227,23 @@ LRESULT CCrabRemoteServerDlg::OnOpenServiceManagerDialog(WPARAM ParameterData1, 
 	}
 
 	return 0;
+}
+
+LRESULT CCrabRemoteServerDlg::OnOpenAudioManagerDialog(WPARAM ParameterData1, LPARAM ParameterData2)
+{
+	//创建一个远程消息对话框
+	PCONTEXT_OBJECT ContextObject = (CONTEXT_OBJECT*)ParameterData2;
+	//非阻塞对话框
+	CAudioManagerDlg* Dialog = new CAudioManagerDlg(this, m_IocpServer, ContextObject);
+	// 设置父窗口为卓面
+	Dialog->Create(IDD_AUDIO_MANAGER_DIALOG, GetDesktopWindow());    //创建非阻塞的Dlg
+	Dialog->ShowWindow(SW_SHOW);
+
+	if (ContextObject != NULL)
+	{
+		ContextObject->DlgIdentity = AUDIO_MANAGER_DIALOG;
+		ContextObject->AudioDlg = Dialog;
+	}
+
+	return LRESULT();
 }
