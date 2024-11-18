@@ -12,7 +12,7 @@
 
 ## 文件结构
 
-- **CrabRemoteServer** 文件夹是被控制端（服务端）的代码，采用VS2019开发
+- **CrabRemoteServer** 文件夹是控制端的代码，采用VS2019开发
 
 ## 关于
 
